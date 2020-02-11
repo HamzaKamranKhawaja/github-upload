@@ -57,8 +57,6 @@ public class BuggyIntDList extends IntDList {
      */
     public void reverse() {
 
-        // FIXME: Below code has multiple problems. Debug the code to implement correct functionality.
-
         DNode temp = null;
         DNode p = _front;
 
@@ -67,15 +65,13 @@ public class BuggyIntDList extends IntDList {
             temp = p._prev;
             p._prev = p._next;
             p._next = temp;
-            p = p._next;        // FIXME: Replace this line (if needed). HINT: Use debugger and Java Visualizer to figure out what it does.
+            p = p._prev;
         }
 
         // HINT: What does this if block do? Use Debugger and Java Visualizer to figure out.
         if (temp != null) {
-            // ------ WRITE ADDITIONAL CODE HERE AND ONLY HERE (IF NEEDED) -----
-
-            // -----------------------------------------------------------------
-            _front = temp._next;    // FIXME: Replace this line (if needed). HINT: Use debugger and Java Visualizer to figure out what it does.
+            _back = _front;
+            _front = temp._prev;
         }
     }
 }
