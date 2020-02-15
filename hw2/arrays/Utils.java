@@ -67,14 +67,14 @@ public class Utils {
         }
 
         String data =
-            in.findWithinHorizon("\\[\\s*((\\d+\\s*,?\\s*)*)\\]|(\\S)", 0);
+                in.findWithinHorizon("\\[\\s*((\\d+\\s*,?\\s*)*)\\]|(\\S)", 0);
 
         if (data == null || in.match().group(1) == null) {
             throw new NoSuchElementException("badly formed input");
         }
 
         StringTokenizer ints =
-            new StringTokenizer(in.match().group(1), ", \t\n");
+                new StringTokenizer(in.match().group(1), ", \t\n");
 
         int[] A = new int[ints.countTokens()];
         for (int i = 0; ints.hasMoreTokens(); i += 1) {
