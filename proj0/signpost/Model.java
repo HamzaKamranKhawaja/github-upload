@@ -7,8 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Arrays;
 
-import static signpost.Place.pl;
-import static signpost.Place.PlaceList;
+import static signpost.Place.*;
 import static signpost.Utils.*;
 
 /** The state of a Signpost puzzle.  Each cell has coordinates (x, y),
@@ -510,17 +509,38 @@ class Model implements Iterable<Model.Sq> {
         }
 
         /** Returns true iff this square may be connected to square S1, that is:
-         *  + S1 is in the correct direction from this square.
-         *  + S1 does not have a current predecessor, this square does not
+         *  - S1 is in the correct direction from this square.
+         *  - S1 does not have a current predecessor, this square does not
          *    have a current successor, S1 is not the first cell in sequence,
          *    and this square is not the last.
-         *  + If S1 and this square both have sequence numbers, then
+         *  - If S1 and this square both have sequence numbers, then
          *    this square's is sequenceNum() == S1.sequenceNum() - 1.
          *  + If neither S1 nor this square have sequence numbers, then
          *    they are not part of the same connected sequence.
          */
         boolean connectable(Sq s1) {
-            // FIXME
+            int direction = this.direction();
+            if(s1.predecessor() != null || this.successor() != null ||
+                    s1.sequenceNum() == 1 || this.sequenceNum() == size()){
+                return false;
+            }
+
+            if (dirOf(this.x, this.y, s1.x, s1.y) != direction){
+                return false;
+            }
+            if (this.sequenceNum() != 0 && s1.sequenceNum() != 0) {
+                this._sequenceNum = s1.sequenceNum() - 1;
+            }
+            
+
+
+
+            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
+                if (s1.group() == this.group() && s1.group() != -1) {
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -536,20 +556,47 @@ class Model implements Iterable<Model.Sq> {
             _unconnected -= 1;
 
             // FIXME: Connect this square to its successor:
-            //        + Set this square's _successor field and S1's
+            //        - Set this square's _successor field and S1's
             //          _predecessor field.
-            //        + If this square has a number, number all its successors
+            //        - If this square has a number, number all its successors
             //          accordingly (if needed).
-            //        + If S1 is numbered, number this square and its
+            //        - If S1 is numbered, number this square and its
             //          predecessors accordingly (if needed).
-            //        + Set the _head fields of this square's successors this
+            //        - Set the _head fields of this square's successors this
             //          square's _head.
-            //        + If either of this square or S1 used to be unnumbered
+            //        - If either of this square or S1 used to be unnumbered
             //          and is now numbered, release its group of whichever
             //          was unnumbered, so that it can be reused.
-            //        + If both this square and S1 are unnumbered, set the
+            //        - If both this square and S1 are unnumbered, set the
             //          group of this square's head to the result of joining
             //          the two groups.
+            this._successor = s1;
+            s1._predecessor = this;
+
+            if(this.sequenceNum() != 0 && s1.sequenceNum() == 0){
+                this._successor._sequenceNum =
+                        this.sequenceNum() + this._successor.sequenceNum();
+                releaseGroup(s1.group());
+                for(Place p: this.successors()){
+                    Sq a = get(p);
+                    a._sequenceNum = a._predecessor.sequenceNum() + 1;
+                }
+            }
+            else if(s1.sequenceNum() != 0 && this.sequenceNum() == 0){
+                this._predecessor._sequenceNum =
+                        this.sequenceNum() + this._predecessor.sequenceNum();
+                releaseGroup(this.group());
+                for(Place p: this.predecessors()){
+                    Sq a = get(p);
+                    a._sequenceNum = a._successor.sequenceNum() + 1;
+                }
+            }
+                for(Place p: this.successors()){
+                    get(p)._head = this._head;
+                }
+                if (this.sequenceNum() == 0 && s1.sequenceNum() == 0){
+                    this._head._group = joinGroups(this._group, s1._group);
+                }
 
             return true;
         }
