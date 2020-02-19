@@ -127,12 +127,9 @@ class PuzzleGenerator implements PuzzleSource {
      *  number in sequence). */
 
     static Sq findUniqueSuccessor(Model model, Sq start) {
-
         PlaceList Success = start.successors();
-
         if (start.sequenceNum() == 0) {
             PlaceList pres = new PlaceList();
-
             for (Place can: Success) {
                 if (Place.dirOf(start.x, start.y, can.x, can.y) != 0) {
                     if (model.get(can).predecessor() == null) {
@@ -140,16 +137,13 @@ class PuzzleGenerator implements PuzzleSource {
                     }
                 }
             }
-
             if (pres.size() == 1) {
                 return model.get(pres.get(0));
             } else {
                 return null;
             }
-
         } else {
             PlaceList pres = new PlaceList();
-
             for (Place can: Success) {
                 if (Place.dirOf(start.x, start.y, can.x, can.y) != 0) {
                     if (model.get(can).predecessor() == null) {
@@ -157,13 +151,11 @@ class PuzzleGenerator implements PuzzleSource {
                     }
                 }
             }
-
             if (pres.size() == 1) {
                 return model.get(pres.get(0));
             } else {
                 return null;
             }
-
         }
     }
 

@@ -10,8 +10,7 @@ import java.util.Arrays;
 import static signpost.Place.*;
 import static signpost.Utils.*;
 
-/* Model.java class *
-   @Hamza Kamran Khawaja */
+/** @author Hamza Kamran Khawaja
 
 /** The state of a Signpost puzzle.  Each cell has coordinates (x, y),
  *  where 0 <= x < width(), 0 <= y < height().  The upper-left corner
@@ -85,24 +84,18 @@ class Model implements Iterable<Model.Sq> {
                 || solution.length * solution[0].length < 2) {
             throw badArgs("must have at least 2 squares");
         }
-        _width = solution.length;
-        _height = solution[0].length;
-        int last = _width * _height;
-        BitSet allNums = new BitSet();
-
+        _width = solution.length; _height = solution[0].length;
+        int last = _width * _height; BitSet allNums = new BitSet();
         _allSuccessors = Place.successorCells(_width, _height);
         _solution = new int[_width][_height];
         deepCopy(solution, _solution);
-
         ArrayList<Integer> Sequences = new ArrayList<>();
-
         _board = new Sq[_width][_height];
         _solnNumToPlace = new Place[last + 1];
-
         for (int x = 0; x < _width; x += 1) {
             for (int y = 0; y < _height; y += 1) {
                 int sequence = solution[x][y];
-                  if (solution[x][y] == 1) {
+                if (solution[x][y] == 1) {
                     _board[x][y] = new Sq(x, y,
                             1, true, arrowDirection(x, y), 0);
                 } else if (solution[x][y] == last) {
@@ -124,7 +117,6 @@ class Model implements Iterable<Model.Sq> {
                 throw badArgs("Number Sequence Invalid. Missing: " + i);
             }
         }
-
         PlaceList[][][] placesToReach =
                 Place.successorCells(width(), height());
         for (int x = 0; x < _width; x += 1) {
@@ -133,7 +125,6 @@ class Model implements Iterable<Model.Sq> {
                     _board[x][y]._successors =
                             placesToReach[x][y][arrowDirection(x, y)];
                 }
-
                 _board[x][y]._predecessors = new PlaceList();
                 for (int x1 = 0; x1 < _width; x1 += 1) {
                     for (int y1 = 0; y1 < _height; y1 += 1) {
@@ -157,8 +148,6 @@ class Model implements Iterable<Model.Sq> {
         _solution = model._solution;
         _usedGroups.addAll(model._usedGroups);
         _allSuccessors = model._allSuccessors;
-
-
         _board = new Sq[_width][_height];
         for (int i = 0; i < _width; i++) {
             for (int j = 0; j < height(); j++) {
@@ -169,14 +158,11 @@ class Model implements Iterable<Model.Sq> {
                         fixed, direction, group);
             }
         }
-
         for (int i = 0; i < _width; i++) {
             for (int j = 0; j < _height; j++) {
                 _allSquares.add(_board[i][j]);
             }
         }
-
-
         for (int i = 0; i < width(); i++) {
             for (int j = 0; j < height(); j++) {
                 if (model._board[i][j]._predecessor != null) {
@@ -184,12 +170,12 @@ class Model implements Iterable<Model.Sq> {
                             _board[model._board[i][j]._predecessor.x]
                                     [model._board[i][j]._predecessor.y];
                 }
-                  if (model._board[i][j]._successor != null) {
+                if (model._board[i][j]._successor != null) {
                     _board[i][j]._successor =
                             _board[model._board[i][j]._successor.x]
                                     [model._board[i][j]._successor.y];
                 }
-                  if (model._board[i][j]._head != null) {
+                if (model._board[i][j]._head != null) {
                     _board[i][j]._head =
                             _board[model._board[i][j]._head.x]
                                     [model._board[i][j]._head.y];
@@ -197,8 +183,6 @@ class Model implements Iterable<Model.Sq> {
             }
         }
     }
-
-
 
     /** Returns the width (number of columns of cells) of the board. */
     final int width() {
@@ -301,7 +285,6 @@ class Model implements Iterable<Model.Sq> {
         for (int x = 0; x < width(); x += 1) {
             for (int y = 0; y < height(); y += 1) {
                 Sq target = get(x, y);
-
                 if (target.sequenceNum()
                         != 0) {
 
@@ -315,10 +298,7 @@ class Model implements Iterable<Model.Sq> {
                             }
                         }
                     }
-
-
                 }
-
             }
         }
         return changes;
@@ -782,9 +762,7 @@ class Model implements Iterable<Model.Sq> {
                 if (this.predecessor() != null) {
                     hasPredecessor = true;
                 }
-
                 int Group = -1;
-
                 if (!Fixed && hasPredecessor) {
                     Group = newGroup();
                 }
@@ -792,19 +770,13 @@ class Model implements Iterable<Model.Sq> {
                     for (Model.Sq current = this; current != null;
                          current = current._predecessor) {
                         current._sequenceNum = 0;
-                        System.out.println("In !Fixed loop, sn: " +
-                                current.sequenceNum());
                         current._head._group = Group;
-                        System.out.println("In !Fixed loop after " +
-                                "changing, group: " + current.sequenceNum());
-
                     }
                 }
 
                 boolean Fixed2 = false;
                 for (Model.Sq current = next; current != null;
                      current = current._successor) {
-                    System.out.println("In Fixed2 loop" + current.group());
                     if (current._hasFixedNum) {
                         Fixed2 = true;
                         break;
@@ -814,12 +786,10 @@ class Model implements Iterable<Model.Sq> {
                 if (next.successor() != null) {
                     hasSuccessor = true;
                 }
-                //next._head = next;
                 int Group2 = -1;
                 if(hasSuccessor) {
                     Group2 = newGroup();
                 }
-
                 if (!Fixed2) {
                     for (Sq current = next; current != null; current = current._successor) {
                         current._sequenceNum = 0;
@@ -827,11 +797,9 @@ class Model implements Iterable<Model.Sq> {
                     }
                 }
             }
-
             for(Sq current = next; current != null;current = current._successor) {
             current._head = next;
-
-        }
+            }
             for (Sq current = next; current != null;current = current._predecessor) {
                 current._head = next;
                 System.out.println("In last loop, group: " + current.group());
