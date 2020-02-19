@@ -9,7 +9,7 @@ import static signpost.Place.*;
 import static signpost.Utils.*;
 
 /** A creator of random Signpost puzzles.
- *  @author Hamza
+ *  @Hamza Kamran Khawaja
  */
 class PuzzleGenerator implements PuzzleSource {
 
@@ -22,7 +22,7 @@ class PuzzleGenerator implements PuzzleSource {
     @Override
     public Model getPuzzle(int width, int height, boolean allowFreeEnds) {
         Model model =
-            new Model(makePuzzleSolution(width, height, allowFreeEnds));
+                new Model(makePuzzleSolution(width, height, allowFreeEnds));
         makeSolutionUnique(model);
         model.autoconnect();
         return model;
@@ -43,7 +43,7 @@ class PuzzleGenerator implements PuzzleSource {
         int x0, y0, x1, y1;
         if (allowFreeEnds) {
             int r0 = _random.nextInt(last),
-                r1 = (r0 + 1 + _random.nextInt(last - 1)) % last;
+                    r1 = (r0 + 1 + _random.nextInt(last - 1)) % last;
             x0 = r0 / height; y0 = r0 % height;
             x1 = r1 / height; y1 = r1 % height;
         } else {
@@ -95,7 +95,7 @@ class PuzzleGenerator implements PuzzleSource {
         boolean found;
         found = false;
         while (makeForwardConnections(model)
-               || makeBackwardConnections(model)) {
+                || makeBackwardConnections(model)) {
             found = true;
         }
         return found;
@@ -127,41 +127,38 @@ class PuzzleGenerator implements PuzzleSource {
      *  number in sequence). */
 
     static Sq findUniqueSuccessor(Model model, Sq start) {
-
-        PlaceList[][][] places =
-                Place.successorCells(model.width(), model.height());
-
-        PlaceList candidates = new PlaceList();
-        PlaceList select = new PlaceList();
-
-        int size = places[start.x][start.y][start.direction()].size();
-        for (int i = 0; i < size; i += 1) {
-            Place temp =
-                    places[start.x][start.y][start.direction()].get(i);
-
-            if (start.connectable(model.get(temp.x, temp.y))) {
-                candidates.add(temp);
-            }
-        }
-
-        if (candidates.size() == 1) {
-            return model.get(candidates.get(0).x, candidates.get(0).y);
-        } else {
-
-            for (Place candidate : candidates) {
-                int num = model.get(candidate.x, candidate.y).sequenceNum();
-                if (num - 1 == start.sequenceNum()) {
-                    select.add(candidate);
+        PlaceList Success = start.successors();
+        if (start.sequenceNum() == 0) {
+            PlaceList pres = new PlaceList();
+            for (Place can: Success) {
+                if (Place.dirOf(start.x, start.y, can.x, can.y) != 0) {
+                    if (model.get(can).predecessor() == null) {
+                        pres.add(can);
+                    }
                 }
             }
-
-            if (select.size() != 1) {
-                return null;
+            if (pres.size() == 1) {
+                return model.get(pres.get(0));
             } else {
-                return model.get(select.get(0).x, select.get(0).y);
+                return null;
+            }
+        } else {
+            PlaceList pres = new PlaceList();
+            for (Place can: Success) {
+                if (Place.dirOf(start.x, start.y, can.x, can.y) != 0) {
+                    if (model.get(can).predecessor() == null) {
+                        pres.add(can);
+                    }
+                }
+            }
+            if (pres.size() == 1) {
+                return model.get(pres.get(0));
+            } else {
+                return null;
             }
         }
     }
+
 
     /** Make all unique backward connections in MODEL (those in which there is
      *  a single possible predecessor).  Return true iff changes made. */
@@ -170,7 +167,8 @@ class PuzzleGenerator implements PuzzleSource {
         boolean result;
         result = false;
         for (Sq sq : model) {
-            if (sq.predecessor() == null && sq.sequenceNum() != 1) {
+            if (sq.predecessor() == null
+                    && sq.sequenceNum() != 1) {
                 Sq found = findUniquePredecessor(model, sq);
                 if (found != null) {
                     found.connect(sq);
@@ -191,15 +189,16 @@ class PuzzleGenerator implements PuzzleSource {
     static Sq findUniquePredecessor(Model model, Sq end) {
         if (end.predecessors() != null) {
             if (end.predecessors().size() == 1) {
-                if (model.get(end.predecessors().get(0)).connectable(end)) {
+                if (model.get(end.predecessors()
+                        .get(0)).connectable(end)) {
                     return model.get(end.predecessors().get(0));
                 }
             } else {
                 PlaceList candidate = new PlaceList();
-                for (Place search : end.predecessors()) {
-                    if (model.get(search).predecessor() == null) {
-                        if (model.get(search).connectable(end)) {
-                            candidate.add(search);
+                for (Place Finding : end.predecessors()) {
+                    if (model.get(Finding).predecessor() == null) {
+                        if (model.get(Finding).connectable(end)) {
+                            candidate.add(Finding);
                         }
                     }
                 }
@@ -223,7 +222,7 @@ class PuzzleGenerator implements PuzzleSource {
             changed = false;
             for (Sq sq : model) {
                 if (sq.hasFixedNum() && sq.sequenceNum() != 1
-                    && sq.direction() != 0) {
+                        && sq.direction() != 0) {
                     model.restart();
                     int n = sq.sequenceNum();
                     sq.unfixNum();
@@ -235,9 +234,9 @@ class PuzzleGenerator implements PuzzleSource {
                     }
                 }
             }
-        } while (changed);
+        }
+        while (changed);
     }
-
     /** Fix additional numbers in MODEL to make the solution from which
      *  it was formed unique.  Need not result in a minimal set of
      *  fixed numbers. */
@@ -260,9 +259,11 @@ class PuzzleGenerator implements PuzzleSource {
             Collections.shuffle(unnumbered, _random);
             for (Place p : unnumbered) {
                 Model model1 = new Model(model);
-                model1.get(p).setFixedNum(model.solution()[p.x][p.y]);
+                model1.get(p).setFixedNum
+                        (model.solution()[p.x][p.y]);
                 if (extendSimple(model1)) {
-                    model.get(p).setFixedNum(model1.get(p).sequenceNum());
+                    model.get(p).setFixedNum
+                            (model1.get(p).sequenceNum());
                     continue AddNum;
                 }
             }

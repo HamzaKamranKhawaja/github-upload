@@ -97,7 +97,6 @@ public class PuzzleGeneratorTests {
         Model M = setUp(tr(SOLN2), SOLN2_NUMBERS, CONNECT2);
         assertEquals("Unique predecessor", M.get(5, 6),
                      findUniquePredecessor(M, M.get(1, 6)));
-        findUniquePredecessor(M, M.get(1, 6));
         assertEquals("Predecessor not unique", null,
                      findUniquePredecessor(M, M.get(3, 3)));
     }

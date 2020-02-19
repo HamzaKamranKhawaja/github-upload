@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
 import static signpost.Place.pl;
 import signpost.Model.Sq;
 import static signpost.Utils.msg;
@@ -162,20 +163,6 @@ public class ModelTests {
         assertTrue("Trivial puzzle should be solved at birth.", model.solved());
     }
 
-    @Test
-    public void solveAndAutoConnectTest() {
-        int[][] board = {
-                { 4, 5, 12, 13 },
-                { 3, 6, 11, 14 },
-                { 2, 7, 10, 15 },
-                { 1, 8, 9, 16 }
-        };
-        Model modelTwo = new Model(tr(board));
-        modelTwo.autoconnect();
-        modelTwo.solve();
-        assertTrue("Puzzle should be solved", modelTwo.solved());
-    }
-
     /* In sqConnectTest and sqDisconnectTest, we disregard the solution
        board passed into Model and instead instantiate our own squares.
        This avoids depending on a working Model constructor.
@@ -186,6 +173,7 @@ public class ModelTests {
           (s6, S ) (s4, S ) (      )
           (s1, NE) (      ) (s2, N )
      */
+
 
     @Test
     public void sqConnectTest() {
@@ -264,6 +252,8 @@ public class ModelTests {
         Sq s8 = model.new Sq(2, 1, 0, false, 8, -1);
         Sq s9 = model.new Sq(2, 2, 9, true, 8, 0);
 
+        s2.connect(s3);
+        s2.disconnect();
         assertTrue("These squares should be connectable.", s1.connect(s2));
         assertTrue("These squares should be connectable.", s2.connect(s3));
         assertTrue("These squares should be connectable.", s3.connect(s4));
@@ -274,9 +264,7 @@ public class ModelTests {
 
         assertTrue("These squares should be connectable.", s8.connect(s9));
         assertTrue("These squares should be connectable.", s7.connect(s8));
-        assertTrue("These squares should be connectable.",  s6.connect(s7));
-
-
+        assertTrue("These squares should be connectable.", s6.connect(s7));
         checkSquare(s6, s6, null, s7, 6, 0);
         checkSquare(s7, s6, s6, s8, 7, 0);
         checkSquare(s8, s6, s7, s9, 8, 0);
@@ -350,6 +338,5 @@ public class ModelTests {
         { 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 20} };
+
 }
-
-
