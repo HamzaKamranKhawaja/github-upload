@@ -63,7 +63,7 @@ import static signpost.Utils.*;
  *  0) and all cells with fixed sequence numbers appear at the
  *  corresponding position in that sequence.
  *
- *  @author
+ *  @Hamza Kamran Khawaja
  */
 class Model implements Iterable<Model.Sq> {
 
@@ -78,7 +78,8 @@ class Model implements Iterable<Model.Sq> {
      *       this Model, so that subsequent changes to SOLUTION have no
      *       effect on the Model.  */
     Model(int[][] solution) {
-        if (solution.length == 0 || solution.length * solution[0].length < 2) {
+        if (solution.length == 0
+                || solution.length * solution[0].length < 2) {
             throw badArgs("must have at least 2 squares");
         }
         _width = solution.length;
@@ -202,7 +203,10 @@ class Model implements Iterable<Model.Sq> {
 
     /** Returns true iff (X, Y) is a valid cell location. */
     final boolean isCell(int x, int y) {
-        return 0 <= x && x < width() && 0 <= y && y < height();
+        return 0 <= x
+                && x < width()
+                && 0 <= y
+                && y < height();
     }
 
     /** Returns true iff P is a valid cell location. */
@@ -283,7 +287,8 @@ class Model implements Iterable<Model.Sq> {
             for (int y = 0; y < height(); y += 1) {
                 Sq target = get(x, y);
 
-                if (target.sequenceNum() != 0) {
+                if (target.sequenceNum()
+                        != 0) {
 
                     for (int x1 = 0; x1 < width(); x1 += 1) {
                         for (int y1 = 0; y1 < height(); y1 += 1) {
@@ -311,7 +316,8 @@ class Model implements Iterable<Model.Sq> {
         for (int x = 0; x < width(); x += 1) {
             for (int y = 0; y < height(); y += 1) {
                 _board[x][y]._sequenceNum = _solution[x][y];
-                if (_solution[x][y] != size() && _solution[x][y] != 1) {
+                if (_solution[x][y] != size()
+                        && _solution[x][y] != 1) {
                     _board[x][y]._successor =
                             solnNumToSq(_solution[x][y] + 1);
                     _board[x][y]._predecessor =
@@ -332,9 +338,7 @@ class Model implements Iterable<Model.Sq> {
      *  successor, or 0 if it has none. */
     private int arrowDirection(int x, int y) {
         int seq0 = _solution[x][y];
-        // FIXME
         int seq1 = seq0 + 1;
-        //size might not be the appropriate parameter
         if(seq0 != size()) {
          for(int i = 0; i < _solution.length; i++){
              for (int j= 0; j < _solution[0].length  ; j++){
@@ -639,10 +643,10 @@ class Model implements Iterable<Model.Sq> {
         boolean connectable(Sq s1) {
             int direction = this.direction();
 
-            if (s1.predecessor() != null ||
-                    this.successor() != null ||
-                    s1.sequenceNum() == 1 ||
-                    this.sequenceNum() == size()) {
+            if (s1.predecessor() != null
+                    || this.successor() != null
+                    || s1.sequenceNum() == 1
+                    || this.sequenceNum() == size()) {
                 return false;
             }
 
@@ -660,8 +664,10 @@ class Model implements Iterable<Model.Sq> {
                 return false;
             }
 
-            if (s1.sequenceNum() == 0 && this.sequenceNum() == 0) {
-                if (s1.group() == this.group() && s1.group() != -1) {
+            if (s1.sequenceNum() == 0
+                    && this.sequenceNum() == 0) {
+                if (s1.group() == this.group()
+                        && s1.group() != -1) {
                     return false;
                 }
             }
