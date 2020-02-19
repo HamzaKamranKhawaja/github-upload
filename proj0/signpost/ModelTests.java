@@ -174,6 +174,7 @@ public class ModelTests {
           (s1, NE) (      ) (s2, N )
      */
 
+
     @Test
     public void sqConnectTest() {
         Model model = new Model(tr(SOLN1));
@@ -251,6 +252,8 @@ public class ModelTests {
         Sq s8 = model.new Sq(2, 1, 0, false, 8, -1);
         Sq s9 = model.new Sq(2, 2, 9, true, 8, 0);
 
+        s2.connect(s3);
+        s2.disconnect();
         assertTrue("These squares should be connectable.", s1.connect(s2));
         assertTrue("These squares should be connectable.", s2.connect(s3));
         assertTrue("These squares should be connectable.", s3.connect(s4));
