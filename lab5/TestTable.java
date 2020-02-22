@@ -256,6 +256,14 @@ public class TestTable {
     }
 
     @Test
+    public void testColumnMatchFilterMine(){
+        Table joined = new Table ("sample_db/joined.db");
+        Table filtered = Table.filter(
+                new ColumnMatchFilter(joined, "t1" + ".first_name",
+                        "t2.first_name"));
+
+    }
+    @Test
     public void testColumnMatchFilter() {
         Table joined = new Table("sample_db/joined.db");
         Table filtered = Table.filter(

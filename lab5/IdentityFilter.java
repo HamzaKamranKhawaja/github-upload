@@ -11,6 +11,6 @@ public class IdentityFilter extends TableFilter {
 
     @Override
     protected boolean keep() {
-        return true;
+        return  true;
     }
 }
