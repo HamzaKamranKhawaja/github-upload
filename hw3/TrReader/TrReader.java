@@ -3,21 +3,43 @@ import java.io.IOException;
 
 /** Translating Reader: a stream that is a translation of an
  *  existing reader.
- *  @author your name here
+ *  @author Hamza Kamran Khawaja
  */
+
+/**Will read from a SOURCE file from OFFSET and output to TO */
+
 public class TrReader extends Reader {
-    /** A new TrReader that produces the stream of characters produced
-     *  by STR, converting all characters that occur in FROM to the
-     *  corresponding characters in TO.  That is, change occurrences of
-     *  FROM.charAt(i) to TO.charAt(i), for all i, leaving other characters
-     *  in STR unchanged.  FROM and TO must have the same length. */
+
+    private Reader Source;
+    private String Origin;
+    private String To;
+
     public TrReader(Reader str, String from, String to) {
-        // TODO: YOUR CODE HERE
+        Source = str;
+        Origin = from;
+        To = to;
     }
 
-    /* TODO: IMPLEMENT ANY MISSING ABSTRACT METHODS HERE
-     * NOTE: Until you fill in the necessary methods, the compiler will
-     *       reject this file, saying that you must declare TrReader
-     *       abstract. Don't do that; define the right methods instead!
-     */
+    /** Reads LENGTH characters into BUFFER starting
+     * at index OFFSET. will return LENGTH */
+    public int read(char[] Buffer, int Offset, int Length) throws IOException {
+
+        int charsToRead = Source.read(Buffer, Offset, Length);
+
+        for (int x = Offset; x < Offset + charsToRead; x += 1) {
+            for (int y = 0; y < Origin.length(); y += 1) {
+                if (Buffer[x] == Origin.charAt(y)) {
+                    Buffer[x] = To.charAt(y);
+                    break;
+                }
+            }
+        }
+        return charsToRead;
+    }
+
+    @Override
+    public void close() {
+
+    }
+
 }

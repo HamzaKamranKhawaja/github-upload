@@ -1,28 +1,27 @@
 import java.io.IOException;
+import java.io.StringReader;
 
 /** String translation.
- *  @author your name here
+ *  @author Hamza Kamran Khawaja
  */
 public class Translate {
-    /** This method should return the String S, but with all characters that
-     *  occur in FROM changed to the corresponding characters in TO.
-     *  FROM and TO must have the same length.
-     *  NOTE: You must use your TrReader to achieve this. */
-    static String translate(String S, String from, String to) {
+
+    static String translate(String words, String from, String to)
+            throws IOException {
         /* NOTE: The try {...} catch is a technicality to keep Java happy. */
-        char[] buffer = new char[S.length()];
+        char[] reader = new char[words.length()];
+
         try {
-            throw new IOException(); //TODO: REPLACE THIS LINE WITH YOUR CODE.
+            StringReader Source = new StringReader(words);
+
+            TrReader trans = new TrReader(Source, from, to);
+            trans.read(reader);
+            words = new String(reader);
+
+            return words;
+
         } catch (IOException e) {
             return null;
         }
     }
-    /*
-       REMINDER: translate must
-      a. Be non-recursive
-      b. Contain only 'new' operations, and ONE other method call, and no
-         other kinds of statement (other than return).
-      c. Use only the library classes String, and any classes with names
-         ending with "Reader" (see online java documentation).
-    */
 }
