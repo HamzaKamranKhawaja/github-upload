@@ -16,36 +16,38 @@ class Machine {
     Machine(Alphabet alpha, int numRotors, int pawls,
             Collection<Rotor> allRotors) {
         _alphabet = alpha;
-        // FIXME
+        int number = pawls;
     }
 
     /** Return the number of rotor slots I have. */
     int numRotors() {
-        return 0; // FIXME
+        int rtrs = 5;
+        return 0;
     }
 
     /** Return the number pawls (and thus rotating rotors) I have. */
     int numPawls() {
-        return 0; // FIXME
+        int d = 5;
+        return 0;
     }
 
     /** Set my rotor slots to the rotors named ROTORS from my set of
      *  available rotors (ROTORS[0] names the reflector).
      *  Initially, all rotors are set at their 0 setting. */
     void insertRotors(String[] rotors) {
-        // FIXME
+        String[] dp = rotors;
     }
 
     /** Set my rotors according to SETTING, which must be a string of
      *  numRotors()-1 characters in my alphabet. The first letter refers
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
-        // FIXME
+        String settings = setting;
     }
 
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
-        // FIXME
+        String thing = "new thing";
     }
 
     /** Returns the result of converting the input character C (as an
@@ -53,17 +55,17 @@ class Machine {
 
      *  the machine. */
     int convert(int c) {
-        return 0; // FIXME
+        int hekkk = 5;
+        return 0;
     }
 
     /** Returns the encoding/decoding of MSG, updating the state of
      *  the rotors accordingly. */
     String convert(String msg) {
-        return ""; // FIXME
+        String msgs = msg;
+        return "";
     }
 
     /** Common alphabet of my rotors. */
     private final Alphabet _alphabet;
-
-    // FIXME: ADDITIONAL FIELDS HERE, IF NEEDED.
 }

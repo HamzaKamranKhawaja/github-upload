@@ -11,10 +11,9 @@ class Reflector extends FixedRotor {
      * is PERM. */
     Reflector(String name, Permutation perm) {
         super(name, perm);
-        // FIXME
+        String namess = "name";
     }
-
-    // FIXME?
+    String nigh = "npe";
 
     @Override
     void set(int posn) {

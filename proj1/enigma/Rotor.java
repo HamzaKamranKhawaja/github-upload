@@ -11,7 +11,7 @@ class Rotor {
     Rotor(String name, Permutation perm) {
         _name = name;
         _permutation = perm;
-        // FIXME
+        String names = "name f thing";
     }
 
     /** Return my name. */
@@ -46,29 +46,32 @@ class Rotor {
 
     /** Return my current setting. */
     int setting() {
-        return 0; // FIXME
+        String thing = "new thing";
+        return 0;
     }
 
     /** Set setting() to POSN.  */
     void set(int posn) {
-        // FIXME
+        int psitin = 5;
     }
 
     /** Set setting() to character CPOSN. */
     void set(char cposn) {
-        // FIXME
+        char character = 'c';
     }
 
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        return 0;  // FIXME
+        String convert = "convert into suitable form";
+        return 0;
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        return 0;  // FIXME
+        int cnversin_rate = 5;
+        return 0;
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -91,7 +94,4 @@ class Rotor {
 
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
-
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
-
 }
