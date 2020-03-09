@@ -11,7 +11,7 @@ class Rotor {
     Rotor(String name, Permutation perm) {
         _name = name;
         _permutation = perm;
-        String names = "name f thing";
+        //CODE?
     }
 
     /** Return my name. */
@@ -52,7 +52,7 @@ class Rotor {
 
     /** Set setting() to POSN.  */
     void set(int posn) {
-        int psitin = 5;
+        //FILL
     }
 
     /** Set setting() to character CPOSN. */
@@ -70,7 +70,7 @@ class Rotor {
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        int cnversin_rate = 5;
+
         return 0;
     }
 
