@@ -1,11 +1,7 @@
 package enigma;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Collection;
-
-import static enigma.EnigmaException.*;
 
 /** Class that represents a complete enigma machine.
  *  @author
@@ -38,6 +34,7 @@ class Machine {
      *  available rotors (ROTORS[0] names the reflector).
      *  Initially, all rotors are set at their 0 setting. */
     void insertRotors(String[] rotors) {
+        usedrotors = new ArrayList<>();
         if(rotors.length > _allRotors.size()){
             throw new EnigmaException("Rotors must be selected from available rotors.");
         }
@@ -53,14 +50,14 @@ class Machine {
                 if(R.name().contentEquals(rotors[i])){
                     contains = true;
                     System.out.println(" ADDED: " + R.name());
-                    _availableRotors.add(R);
+                    usedrotors.add(R);
             }
         }
             if(!contains){
                 throw new EnigmaException("You cannot add a rotor not in allRotors");
             }
         }
-        for(Rotor R: _availableRotors){
+        for(Rotor R: usedrotors){
             R.set(0);
         }
     }
@@ -69,17 +66,17 @@ class Machine {
      *  numRotors()-1 characters in my alphabet. The first letter refers
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
-        if(setting.length() != _availableRotors.size() - 1){
+        if(setting.length() != numRotors() - 1){
             throw new EnigmaException("String setting should be of length numRotors() -1");
         }
         for (int i = 0; i < setting.length(); i++){
-            _availableRotors.get(i + 1).set(setting.charAt(i));
+            usedrotors.get(i + 1).set(setting.charAt(i));
         }
     }
 
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
-       String plugboardString = plugboard.alphabet().toString();
+    /*   String plugboardString = plugboard.alphabet().toString();
        if(plugboardString.length() > _alphabet.size()){
            throw new EnigmaException("Plugboard cannot contain characters not in alphabet");
        }
@@ -87,7 +84,7 @@ class Machine {
             if(!_alphabet.contains(plugboard.alphabet().toChar(i))){
                 throw new EnigmaException("Plugboard has characters not in alphabet of machine");
             }
-       }
+       }*/
         _plugboard = plugboard;
 
     }
@@ -97,29 +94,33 @@ class Machine {
      *  the machine. */
     int convert(int c) {
         int transformed = _plugboard.permute(c);
-        if (_availableRotors.size() == 0){
+        if (usedrotors.size() == 0){
             throw new EnigmaException("Cannot convert if no rotors");
         }
-       for (int i = numRotors() - numPawls(); i <= numRotors() - 1; i++){
-           if(!_availableRotors.get(i).reflecting() && _availableRotors.get(i).rotates()
-                   && i != _availableRotors.size() - 1 && _availableRotors.get(i + 1).atNotch()){
-               _availableRotors.get(i).advance();
+       for (int i = numRotors() - numPawls(); i <= numRotors() - 1; i++){ //fix
+           if(!usedrotors.get(i).reflecting() && usedrotors.get(i).rotates()
+                   && i != usedrotors.size() - 1 && usedrotors.get(i + 1).atNotch()){
+               usedrotors.get(i).advance();
+           }
+           else if(!usedrotors.get(i).reflecting() && usedrotors.get(i).rotates()
+                   && i != usedrotors.size() - 1 && usedrotors.get(i).atNotch()){
+               usedrotors.get(i).advance();
            }
        }
-        _availableRotors.get(_availableRotors.size() - 1).advance();
+        usedrotors.get(usedrotors.size() - 1).advance();
 
             //TODO: WHAT ABOUT NOTCHES & double stepping
         //loops to convert forward through all rotors availableeeeeee
-        for(int j = _availableRotors.size() - 1; j >= 0; j--){
-            System.out.println("Before permutation in  "+ j + " : " + transformed);
-             transformed = _availableRotors.get(j).convertForward(transformed);
-            System.out.println("After permutation in : "+ j + " : " + transformed);
+        for(int j = usedrotors.size() - 1; j >= 0; j--){
+            //System.out.println("Before permutation in  "+ j + " : " + transformed);
+             transformed = usedrotors.get(j).convertForward(transformed);
+           // System.out.println("After permutation in : "+ j + " : " + transformed);
         }
         //convert Backwards
-        for(int k = 1; k < _availableRotors.size(); k++){
-            System.out.println("Before Inversion in: " + k + " character: " + transformed);
-            transformed = _availableRotors.get(k).convertBackward(transformed);
-            System.out.println("After Inversion in: " + k + " character: " + transformed);
+        for(int k = 1; k < usedrotors.size(); k++){
+            //System.out.println("Before Inversion in: " + k + " character: " + transformed);
+            transformed = usedrotors.get(k).convertBackward(transformed);
+            //System.out.println("After Inversion in: " + k + " character: " + transformed);
 
         }
         transformed = _plugboard.permute(transformed);
@@ -131,7 +132,7 @@ class Machine {
     String convert(String msg) {
         String message = msg.replaceAll("\\s", "");
         String converted = "";
-        for(int i = 0; i < msg.length(); i++){
+        for(int i = 0; i < message.length(); i++){
             if(!_alphabet.contains(message.charAt(i))){
                 throw new EnigmaException("Message has characters not in alphabet: "
                         + message.charAt(i));
@@ -155,7 +156,7 @@ class Machine {
     Collection<Rotor> _allRotors;
 
     /** Collection of rotors I have */
-    ArrayList<Rotor> _availableRotors = new ArrayList<Rotor>();
+    ArrayList<Rotor> usedrotors;
 
     /** Plugboard arrangement */
     Permutation _plugboard;

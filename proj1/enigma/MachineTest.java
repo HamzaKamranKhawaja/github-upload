@@ -33,8 +33,8 @@ public class MachineTest {
         automata.insertRotors(new String[]{"I", "II", "III", "IV"});
         Alphabet newww = new Alphabet();
         System.out.println(newww.size());
-
-        System.out.println(automata.convert("AZXCVBNM"));
+        automata.setPlugboard(new Permutation ("",new Alphabet() )); //add plugboard to machine
+        automata.convert("AZXCVBNM");
         System.out.println("r4 setting is : " + r4._setting);
         System.out.println("r3 setting is : " + r3._setting);
 

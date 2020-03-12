@@ -11,7 +11,7 @@ class Alphabet {
      *  K (numbering from 0). No character may be duplicated. */
     Alphabet(String chars) {
         _alphabet = chars;
-    }
+    }  //check for duplicates
 
     /** A default alphabet of all upper-case characters. */
     Alphabet() {
@@ -42,7 +42,7 @@ class Alphabet {
     /** Returns the index of character CH which must be in
      *  the alphabet. This is the inverse of toChar(). */
     int toInt(char ch) {
-        return this._alphabet.indexOf(ch);
+        return this._alphabet.indexOf(ch);  //dont index out of bounds
 
         //Removed the default lines:
         //return ch - 'A';

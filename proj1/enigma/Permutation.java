@@ -93,7 +93,6 @@ class Permutation {
 
     /** Return the value of P modulo the size of this permutation. */
     final int wrap(int p) {
-        System.out.println(Forward.length);
         int r = p % size();
         if (r < 0) {
             r += size();
@@ -103,7 +102,7 @@ class Permutation {
 
     /** Returns the size of the alphabet I permute. */
     int size() {
-        return Forward.length;
+        return _alphabet.size();
     }
 
     /** Return the result of applying this permutation to P modulo the

@@ -93,9 +93,19 @@ public final class Main {
     private void process() {
         Machine machine = readConfig();
         //settings file?
+        if (!_input.hasNext("\\*")){
+            throw new EnigmaException("Settings file does not begin with *");
+        }
+        _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
         String settings = _input.nextLine().trim();
         setUp(machine, settings);
-        while (_input.hasNext()){
+        while (_input.hasNext()) {
+            if(_input.hasNext("\\*")){
+                _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+                settings = _input.nextLine();
+                setUp(machine, settings);
+            }
+            _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
             String converted = machine.convert(_input.nextLine().trim());
             printMessageLine(converted);
         }
@@ -113,32 +123,28 @@ public final class Main {
             String uncleanAlpha = _config.next();
             String cleanAlpha = uncleanAlpha.replaceAll("[*()]", "");
             _alphabet = new Alphabet(cleanAlpha);
+
             //TODO: MAKE SURE THE FOLLOWING WORKS
             _config.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
             if (_config.hasNextInt()){
                 rotor_slots = _config.nextInt();
             }
             else{throw new EnigmaException("configuration file should contain total number of rotors");}
-
             _config.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-
             if (_config.hasNextInt()){
                 _pawls = _config.nextInt();
             }
             else{throw new EnigmaException("configuration file should contain total number of pawls");}
-
             _config.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
             ArrayList<Rotor> _allRotors = new ArrayList<Rotor>();
                 while (_config.hasNext()) {
                     _allRotors.add(readRotor());
                 }
-
-            return new Machine(_alphabet, 2, 1, _allRotors);
+            return new Machine(_alphabet, rotor_slots, _pawls , _allRotors);
         } catch (NoSuchElementException excp) {
             throw error("configuration file truncated");
         }
     }
-
     /**
      * Return a rotor, reading its description from _config.
      */
@@ -191,34 +197,45 @@ public final class Main {
      *  which must have the format specified in the assignment. */
     private void setUp(Machine M, String settings) {
         settings = settings.trim();
-        if (settings.charAt(0) != '*'){
+        if (settings.charAt(0) != '*') {
             throw new EnigmaException("File must start with *");
         }
         String Plugboard = "";
         boolean set = false;
         int firstseen = 0;
         String[] arrangement = settings.split("\\s+");
-        for(int i = 1; i < arrangement.length; i++){
-            if (arrangement[i].charAt(0) == '('){
+        for (int i = 1; i < arrangement.length; i++) {
+            //TODO: ENSURE THAT IF THERE IS NO SPACE THIS STILL WORKS
+            if (arrangement[i].charAt(0) == '(') {
                 Plugboard = Plugboard + arrangement[i];
-                if (!set){
+                if (!set) {
                     set = true;
                     firstseen = i;
                 }
             }
         }
-        String[] rotors = new String[arrangement.length - firstseen - 1];
+
+        int numOfPlugboards = 0;
+
+        if (firstseen == 0) {
+        } else {
+            numOfPlugboards = arrangement.length - firstseen - 1;
+        }
+        String[] rotors = new String[arrangement.length - numOfPlugboards - 2];
         int numofrotors = rotors.length;
         System.arraycopy(arrangement, 1, rotors, 0, rotors.length);
-        String rotorSettings = arrangement[1 + numofrotors];
+        String rotorSettings = arrangement[numofrotors + 1];
         String setrotors = "";
         convertStringArrayToString(rotors, " ");
         M.insertRotors(rotors);
         M.setRotors(rotorSettings);
 
+        if (Plugboard.equals("")) {
+            M.setPlugboard(new Permutation("", _alphabet));
+        } else {
+            M.setPlugboard(new Permutation(Plugboard, _alphabet));
+        }
     }
-
-
     /** Print MSG in groups of five (except that the last group may
      *  have fewer letters). */
     private void printMessageLine(String msg) {
