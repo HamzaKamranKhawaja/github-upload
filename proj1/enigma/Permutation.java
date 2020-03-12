@@ -47,7 +47,8 @@ class Permutation {
                     throw new IllegalArgumentException("Incorrect Sequence of mapping");
                 }
             }
-            else if (!alphabet.contains(current)){
+            //TODO: Find if you need these lines
+          else if (!alphabet.contains(current)) {
                 throw new IllegalArgumentException("Incorrect type in sequence");
             }
             else {
@@ -92,6 +93,7 @@ class Permutation {
 
     /** Return the value of P modulo the size of this permutation. */
     final int wrap(int p) {
+        System.out.println(Forward.length);
         int r = p % size();
         if (r < 0) {
             r += size();
@@ -130,7 +132,7 @@ class Permutation {
     /** Return the result of applying the inverse of this permutation to C. */
     char invert(char c) {
         int index = _alphabet.toInt(c);
-        char inverted = _alphabet.toChar(index + 1);
+        char inverted = _alphabet.toChar(index);
         return inverted;
     }
 

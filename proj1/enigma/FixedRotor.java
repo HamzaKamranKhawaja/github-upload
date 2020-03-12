@@ -13,4 +13,9 @@ class FixedRotor extends Rotor {
         super(name, perm);
     }
 
+    @Override
+    boolean rotates() {
+        return false;
+    }
+
 }

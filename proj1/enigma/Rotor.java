@@ -3,7 +3,7 @@ package enigma;
 import static enigma.EnigmaException.*;
 
 /** Superclass that represents a rotor in the enigma machine.
- *  @author
+ *  @author Hamza Kamran
  */
 class Rotor {
 
@@ -11,7 +11,8 @@ class Rotor {
     Rotor(String name, Permutation perm) {
         _name = name;
         _permutation = perm;
-        //CODE?
+        _setting = 0;
+
     }
 
     /** Return my name. */
@@ -46,32 +47,35 @@ class Rotor {
 
     /** Return my current setting. */
     int setting() {
-        String thing = "new thing";
-        return 0;
+        return _setting;
     }
 
     /** Set setting() to POSN.  */
     void set(int posn) {
-        //FILL
+        _setting = _permutation.wrap(posn);
     }
 
     /** Set setting() to character CPOSN. */
     void set(char cposn) {
-        char character = 'c';
+        _setting = _permutation.alphabet().toInt(cposn);
     }
 
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        String convert = "convert into suitable form";
-        return 0;
+        int wrappedConversion = _permutation.wrap(p + _setting);
+        int Converted = _permutation.permute(wrappedConversion);
+        int releasedConverted = _permutation.wrap(Converted - _setting);
+        return releasedConverted;
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-
-        return 0;
+        int wrappedConversion = _permutation.wrap(e + _setting);
+        int Converted = _permutation.invert(wrappedConversion);
+        int releasedConverted = _permutation.wrap(Converted - _setting);
+        return releasedConverted;
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -94,4 +98,7 @@ class Rotor {
 
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
+
+    /** Stores the setting of the rotor */
+    public int _setting;
 }

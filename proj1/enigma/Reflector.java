@@ -11,9 +11,8 @@ class Reflector extends FixedRotor {
      * is PERM. */
     Reflector(String name, Permutation perm) {
         super(name, perm);
-        String namess = "name";
     }
-    String nigh = "npe";
+
 
     @Override
     void set(int posn) {
@@ -21,5 +20,19 @@ class Reflector extends FixedRotor {
             throw error("reflector has only one position");
         }
     }
+
+    @Override
+    boolean reflecting() {
+        return true;
+    }
+
+    @Override
+    void set(char cposn) {
+        //Todo: Recheck
+        if(alphabet().toInt(cposn) == 0){
+            throw new EnigmaException("Reflector has only 1 position.");
+        }
+    }
+
 
 }

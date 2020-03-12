@@ -25,19 +25,27 @@ class Alphabet {
 
     /** Returns true if CH is in this alphabet. */
     boolean contains(char ch) {
-        return 'A' <= ch && ch <= 'Z';
+        return this._alphabet.indexOf(ch) >= 0;
+        //Removed default lines
+        //return 'A' <= ch && ch <= 'Z';
     }
 
     /** Returns character number INDEX in the alphabet, where
      *  0 <= INDEX < size(). */
     char toChar(int index) {
-        return (char) ('A' + index);
+        return this._alphabet.charAt(index);
+
+        //Removed default lines:
+        //return (char) ('A' + index);
     }
 
     /** Returns the index of character CH which must be in
      *  the alphabet. This is the inverse of toChar(). */
     int toInt(char ch) {
-        return ch - 'A';
+        return this._alphabet.indexOf(ch);
+
+        //Removed the default lines:
+        //return ch - 'A';
     }
     private String _alphabet;
 }

@@ -18,7 +18,7 @@ public class PermutationTest {
      * Testing time limit.
      */
     @Rule
-    public Timeout globalTimeout = Timeout.seconds(100000);
+    public Timeout globalTimeout = Timeout.seconds(5);
 
     /* ***** TESTING UTILITIES ***** */
 
@@ -69,7 +69,7 @@ public class PermutationTest {
 
     @Test
     public void testSize() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFG"));
+        Permutation p = new Permutation("(ABD) (C)    (EFG)      ", new Alphabet("ABCDEFG"));
         assertEquals(7, p.size());
 
         Permutation h = new Permutation("(ABCDEFGHIJK)(LM)(N)", new Alphabet("ABCDEFGHIJKLMN"));
@@ -78,23 +78,25 @@ public class PermutationTest {
 
     @Test
     public void testPermuteInt() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFG"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFGH"));
         assertEquals(1, p.permute(0));
         assertEquals(3, p.permute(1));
         assertEquals(2, p.permute(2));
         assertEquals(5, p.permute(4));
         assertEquals(0, p.permute(3));
         assertEquals(4, p.permute(6));
+        assertEquals(7, p.permute(7));
     }
 
     @Test
     public void testInvertInt() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFG"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)(1)", new Alphabet("ABCDEFGH1"));
         assertEquals(3, p.invert(0));
         assertEquals(0, p.invert(1));
         assertEquals(2, p.invert(2));
         assertEquals(1, p.invert(3));
         assertEquals(6, p.invert(4));
+        assertEquals(7, p.invert(7));
 
     }
 
@@ -123,9 +125,19 @@ public class PermutationTest {
         assertEquals(4, p.invert(5));
         assertEquals(5, p.invert(6));
         assertEquals(7, p.invert(7));
+    }
 
-
-
+    @Test
+    public void testError() {
+        Permutation p = new Permutation("(ABD)(C)(EFG)(1)", new Alphabet("ABCDEFGH1"));
+        assertEquals(3, p.invert(0));
+        assertEquals(0, p.invert(1));
+        assertEquals(2, p.invert(2));
+        assertEquals(1, p.invert(3));
+        assertEquals(6, p.invert(4));
+        assertEquals(4, p.invert(5));
+        assertEquals(5, p.invert(6));
+        assertEquals(7, p.invert(7));
     }
 
     @Test
@@ -135,12 +147,5 @@ public class PermutationTest {
 
         assertTrue(p.derangement());
         assertFalse(g.derangement());
-    }
-
-    @Test
-    public void testAlphabet() {
-        Permutation p = new Permutation("(ABC)", new Alphabet("ABC"));
-        //TODO: Fill code here
-
     }
 }
