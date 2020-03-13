@@ -89,19 +89,38 @@ public final class Main {
         if (!_input.hasNext("\\*")) {
             throw new EnigmaException("Settings file does not begin with *");
         }
-        _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+        //_input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
         String settings = _input.nextLine().trim();
         setUp(machine, settings);
-        while (_input.hasNext()) {
+        boolean DOIT = false;
+        while (_input.hasNextLine()) {
+
             if (_input.hasNext("\\*")) {
                 _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
                 settings = _input.nextLine();
-                setUp(machine, settings);
+                if (settings.contains("*")) {
+                    setUp(machine, settings);
+                }
+                DOIT = true;
+            } else if (DOIT) {
+                _output.println();
+                DOIT = false;
             }
-            _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-            String converted = machine.convert(_input.nextLine().trim());
+            String nextLine = _input.nextLine();
+            if (nextLine.equals("")) {
+                _output.println();
+            }
+          /*  while(_input.hasNext("\\n+")){
+                _output.println();
+            }*/
+          else{
+           //_input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+            String converted = machine.convert(nextLine.trim());
             printMessageLine(converted);
-        }
+            if (_input.hasNextLine()) {
+                _output.println();;;;;
+            }
+        }}
         _input.close();
         _config.close();
         _output.close();
@@ -163,7 +182,7 @@ public final class Main {
 
             if (type.charAt(0) == 'M') {
                 String notches = type.subSequence(1,
-                        type.length() - 1).toString();
+                        type.length()).toString();
                 return new MovingRotor(name,
                         new Permutation(bestsequence, _alphabet), notches);
             } else if (type.length() > 1) {
@@ -234,7 +253,6 @@ public final class Main {
             }
             _output.print(msg.charAt(i));
         }
-        _output.println();
     }
 
     /** converts array to string.

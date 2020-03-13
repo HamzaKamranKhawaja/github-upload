@@ -109,7 +109,8 @@ class Machine {
             } else if (!usedrotors.get(i).reflecting()
                    && usedrotors.get(i).rotates()
                    && i != usedrotors.size() - 1
-                   && usedrotors.get(i).atNotch()) {
+                   && usedrotors.get(i).atNotch()
+                    && usedrotors.get(i - 1).rotates()) {
                 usedrotors.get(i).advance();
             }
         }
