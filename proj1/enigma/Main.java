@@ -95,24 +95,23 @@ public final class Main {
         while (_input.hasNextLine()) {
 
             if (_input.hasNext("\\*")) {
-                _input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
                 settings = _input.nextLine();
                 if (settings.contains("*")) {
                     setUp(machine, settings);
+                } else {
+                    _output.println(settings);
                 }
-                if (_input.hasNextLine()) {
-                    _output.println();
-                }
-            }
-
-            String nextLine = _input.nextLine();
-            if (nextLine.equals("")) {
-                _output.println();
             } else {
-                String converted = machine.convert(nextLine.trim());
-                printMessageLine(converted);
-                if (_input.hasNextLine()) {
+                String nextLine = _input.nextLine();
+                if (nextLine.equals("")) {
                     _output.println();
+                } else {
+                    String next = nextLine.trim();
+                    String converted = machine.convert(next);
+                    printMessageLine(converted);
+                    if (_input.hasNextLine()) {
+                        _output.println();
+                    }
                 }
             }
         }
