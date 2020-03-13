@@ -4,9 +4,6 @@ import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.Timeout;
 import static org.junit.Assert.*;
-
-import java.util.HashMap;
-
 import static enigma.TestUtils.*;
 
 /** The suite of all JUnit tests for the Permutation class.
@@ -66,7 +63,7 @@ public class AlphabetTest {
 
     }
     @Test
-    public void toCharTest(){
+    public void toCharTest() {
         Alphabet A = new Alphabet("ABCGDEH");
         assertEquals('A', A.toChar(0));
         assertEquals('B', A.toChar(1));
@@ -80,7 +77,7 @@ public class AlphabetTest {
 
     }
     @Test
-    public void toIntTest(){
+    public void toIntTest() {
         Alphabet A = new Alphabet("ABCGDEH");
         assertEquals(0, A.toInt('A'));
         assertEquals(1, A.toInt('B'));

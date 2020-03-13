@@ -12,8 +12,6 @@ import static enigma.TestUtils.*;
  */
 public class PermutationTest {
 
-    //TODO: CHECK IMPLEMENTATION OF ALPHABET. DOES NOT SEEM
-    //TODO: TO BE GENERAL. ABCDEF... INSTEAD OF ABD OR OTHER RANDOM ALPHA SET.
     /**
      * Testing time limit.
      */
@@ -57,28 +55,21 @@ public class PermutationTest {
         checkPerm("identity", UPPER_STRING, UPPER_STRING);
     }
 
-//    @Test
-//    public void testInvertChar(){
-//        Permutation p = getNewPermutation("(BACD)", getNewAlphabet("ABCD"));
-//        assertEquals('B', p.invert('A'));
-//        assertEquals('A', p.invert('C'));
-//        assertEquals('C', p.invert('D'));
-//        assertEquals('D', p.invert('B'));
-//
-//    }
-
     @Test
     public void testSize() {
-        Permutation p = new Permutation("(ABD) (C)    (EFG)      ", new Alphabet("ABCDEFG"));
+        Permutation p = new Permutation("(ABD) (C)(EFG)",
+                new Alphabet("ABCDEFG"));
         assertEquals(7, p.size());
 
-        Permutation h = new Permutation("(ABCDEFGHIJK)(LM)(N)", new Alphabet("ABCDEFGHIJKLMN"));
+        Permutation h = new Permutation("(ABCDEFGHIJK)(LM)(N)",
+                new Alphabet("ABCDEFGHIJKLMN"));
         assertEquals(14, h.size());
     }
 
     @Test
     public void testPermuteInt() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFGH"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)",
+                new Alphabet("ABCDEFGH"));
         assertEquals(1, p.permute(0));
         assertEquals(3, p.permute(1));
         assertEquals(2, p.permute(2));
@@ -90,7 +81,8 @@ public class PermutationTest {
 
     @Test
     public void testInvertInt() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)(1)", new Alphabet("ABCDEFGH1"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)(1)",
+                new Alphabet("ABCDEFGH1"));
         assertEquals(3, p.invert(0));
         assertEquals(0, p.invert(1));
         assertEquals(2, p.invert(2));
@@ -102,7 +94,8 @@ public class PermutationTest {
 
     @Test
     public void testPermuteChar() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFGHI"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)",
+                new Alphabet("ABCDEFGHI"));
         assertEquals('B', p.permute('A'));
         assertEquals('D', p.permute('B'));
         assertEquals('A', p.permute('D'));
@@ -116,7 +109,8 @@ public class PermutationTest {
 
     @Test
     public void testInvertChar() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)", new Alphabet("ABCDEFGH"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)",
+                new Alphabet("ABCDEFGH"));
         assertEquals(3, p.invert(0));
         assertEquals(0, p.invert(1));
         assertEquals(2, p.invert(2));
@@ -129,7 +123,8 @@ public class PermutationTest {
 
     @Test
     public void testError() {
-        Permutation p = new Permutation("(ABD)(C)(EFG)(1)", new Alphabet("ABCDEFGH1"));
+        Permutation p = new Permutation("(ABD)(C)(EFG)(1)",
+                new Alphabet("ABCDEFGH1"));
         assertEquals(3, p.invert(0));
         assertEquals(0, p.invert(1));
         assertEquals(2, p.invert(2));
@@ -142,8 +137,10 @@ public class PermutationTest {
 
     @Test
     public void testDerangement() {
-        Permutation p = new Permutation("(ABDC)(EFG)", new Alphabet("ABCDEFG"));
-        Permutation g = new Permutation("(ABD)(EFG)", new Alphabet("ABCDEFG"));
+        Permutation p = new Permutation("(ABDC)(EFG)",
+                new Alphabet("ABCDEFG"));
+        Permutation g = new Permutation("(ABD)(EFG)",
+                new Alphabet("ABCDEFG"));
 
         assertTrue(p.derangement());
         assertFalse(g.derangement());

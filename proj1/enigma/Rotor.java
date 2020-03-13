@@ -1,9 +1,7 @@
 package enigma;
 
-import static enigma.EnigmaException.*;
-
 /** Superclass that represents a rotor in the enigma machine.
- *  @author Hamza Kamran
+ *  @author Hamza Kamran.
  */
 class Rotor {
 
@@ -12,7 +10,6 @@ class Rotor {
         _name = name;
         _permutation = perm;
         _setting = 0;
-
     }
 
     /** Return my name. */
@@ -63,19 +60,20 @@ class Rotor {
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        int wrappedConversion = _permutation.wrap(p + _setting);
-        int Converted = _permutation.permute(wrappedConversion);
-        int releasedConverted = _permutation.wrap(Converted - _setting);
-        return releasedConverted;
+        int wrappedConversion = _permutation.wrap(p + setting());
+        int converted = _permutation.permute(wrappedConversion);
+        int releasedconverted = _permutation.wrap(converted - setting());
+        return releasedconverted;
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        int wrappedConversion = _permutation.wrap(e + _setting);
-        int Converted = _permutation.invert(wrappedConversion);
-        int releasedConverted = _permutation.wrap(Converted - _setting);
-        return releasedConverted;
+        int wrappedConversion = _permutation.wrap(e + setting());
+        int converted = _permutation.invert(wrappedConversion);
+        int releasedconverted = _permutation.wrap
+                (converted - setting());
+        return releasedconverted;
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -99,6 +97,6 @@ class Rotor {
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
 
-    /** Stores the setting of the rotor */
-    public int _setting;
+    /** Stores the setting of the rotor. */
+    protected int _setting;
 }

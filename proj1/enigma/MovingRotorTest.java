@@ -2,7 +2,6 @@ package enigma;
 
 import org.junit.Test;
 import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.Timeout;
 import static org.junit.Assert.*;
 
@@ -35,13 +34,6 @@ public class MovingRotorTest {
         for (int i = 0; i < N; i += 1) {
             char c = fromAlpha.charAt(i), e = toAlpha.charAt(i);
             int ci = alpha.indexOf(c),    ei = alpha.indexOf(e);
-/*            System.out.println(alpha.toString());
-            System.out.println("character at position, " + i + " c: "+  c);
-            System.out.println("position in alpha of c, ci: "+ ci);
-            System.out.println(toAlpha);
-            System.out.println("character at position " +  i +  " e: " + e);
-            System.out.println("position in toAlpha of e, ei: ");
-            System.out.println(ei);*/
             assertEquals(msg(testId, "wrong translation of %d (%c)", ci, c),
                          ei, rotor.convertForward(ci));
             assertEquals(msg(testId, "wrong inverse of %d (%c)", ei, e),
@@ -91,7 +83,7 @@ public class MovingRotorTest {
         System.out.println(rotor._setting);
         assertEquals(2, rotor._setting);
 
-        for(int i = 2; i < 26; i++ ){
+        for (int i = 2; i < 26; i++) {
             System.out.println(rotor._setting);
             rotor.advance();
         }
@@ -110,13 +102,13 @@ public class MovingRotorTest {
     }
 
     @Test (expected = EnigmaException.class)
-    public void CheckNotchandadvance(){
+    public void checkNotchandadvance() {
         setRotor("I", NAVALA, "BC");
         rotor.advance();
         assertTrue(rotor.atNotch());
 
         setRotor("I", NAVALA, "RST");
-        for(int i = 0; i < 19; i++){
+        for (int i = 0; i < 19; i++) {
             rotor.advance();
         }
         assertTrue(rotor.atNotch());
@@ -126,23 +118,15 @@ public class MovingRotorTest {
         checkRotor("Rotor III (A)", UPPER_STRING, NAVALZ_MAP.get("III"));
         rotor.set(25);
         assertFalse(rotor.atNotch());
-
         rotor.advance();
         assertTrue(rotor.atNotch());
-
-        rotor.advance();;
-        assertTrue(rotor.atNotch());
-
         rotor.advance();
         assertTrue(rotor.atNotch());
-
+        assertTrue(rotor.atNotch());
+        rotor.advance();
         rotor.advance();
         assertFalse(rotor.atNotch());
-
         setRotor("III", NAVALZ, "1");
-
-
-
     }
 
 }
