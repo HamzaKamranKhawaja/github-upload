@@ -89,10 +89,9 @@ public final class Main {
         if (!_input.hasNext("\\*")) {
             throw new EnigmaException("Settings file does not begin with *");
         }
-        //_input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
         String settings = _input.nextLine().trim();
         setUp(machine, settings);
-        boolean DOIT = false;
+
         while (_input.hasNextLine()) {
 
             if (_input.hasNext("\\*")) {
@@ -101,26 +100,22 @@ public final class Main {
                 if (settings.contains("*")) {
                     setUp(machine, settings);
                 }
-                DOIT = true;
-            } else if (DOIT) {
-                _output.println();
-                DOIT = false;
+                if (_input.hasNextLine()) {
+                    _output.println();
+                }
             }
+
             String nextLine = _input.nextLine();
             if (nextLine.equals("")) {
                 _output.println();
+            } else {
+                String converted = machine.convert(nextLine.trim());
+                printMessageLine(converted);
+                if (_input.hasNextLine()) {
+                    _output.println();
+                }
             }
-          /*  while(_input.hasNext("\\n+")){
-                _output.println();
-            }*/
-          else{
-           //_input.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-            String converted = machine.convert(nextLine.trim());
-            printMessageLine(converted);
-            if (_input.hasNextLine()) {
-                _output.println();;;;;
-            }
-        }}
+        }
         _input.close();
         _config.close();
         _output.close();
