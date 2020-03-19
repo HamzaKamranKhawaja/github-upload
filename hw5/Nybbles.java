@@ -25,7 +25,13 @@ public class Nybbles {
         if (k < 0 || k >= _n) {
             throw new IndexOutOfBoundsException();
         } else {
-            return 0; // REPLACE WITH SOLUTION
+            int index = k / 8;
+            int nybble = k % 8;
+            int bits = this._data[index];
+            int noleft = (bits << (4 * (7 - nybble))) >> (4 * (7 - nybble));
+            int noright = (noleft >> (4 * nybble));
+
+            return noright;
         }
     }
 
@@ -37,13 +43,21 @@ public class Nybbles {
         } else if (val < (-MAX_VALUE - 1) || val > MAX_VALUE) {
             throw new IllegalArgumentException();
         } else {
-            _data[0] = 0; // REPLACE WITH SOLUTION
+            int index = k / 8;
+            int nybble = k % 8;
+            int bits = this._data[index];
+            int value = this.get(k);
+            int shifted = value << (nybble * 4);
+            int reduced = bits - shifted;
+            int replacement = val << (nybble * 4);
+            int set = reduced | replacement;
+            _data[index] = set;
         }
     }
 
     /** DON'T CHANGE OR ADD TO THESE.*/
     /** Size of current array (in nybbles). */
-    private int _n;
+    public int _n;
     /** The array data, packed 8 nybbles to an int. */
-    private int[] _data;
+    public int[] _data;
 }

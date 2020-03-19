@@ -16,6 +16,10 @@ public class BitExerciseTest {
     public void testPowerOfTwo() {
         boolean powOfTwo = BitExercise.powerOfTwo(32);
         assertTrue(powOfTwo);
+        boolean pow2 = BitExercise.powerOfTwo(16);
+        assertTrue(pow2);
+        boolean pow3 = BitExercise.powerOfTwo(64);
+        assertTrue(pow3);
         boolean notPower = BitExercise.powerOfTwo(7);
         assertFalse(notPower);
     }
