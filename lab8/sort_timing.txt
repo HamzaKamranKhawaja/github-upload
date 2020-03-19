@@ -1,0 +1,23 @@
+Q: Is one sorting algorithm always faster than another?
+A: Yes, the CountingSorter appears to be the fastest while the Bubble sort appears to perform the worse.
+
+Q: Above we said that BubbleSort, WipingBubbleSort, and InsertionSort each had the same Theta(N^2) asymptotic time complexity. How can you explain the differences in the plots for these three algorithms?
+A: Theta(N^2) is the worst time complexity for these algorithms, so depending on the setup, some algorithms may perform better than others. In this case, Bubble Sort performed the worse.
+
+Q: What information can we gain from empirical analysis of algorithms which might not be as noticeable in asymptotical bounds?
+A: empirical analysis can show real implementation of the sorting algorithm which is better than using a stop watch.
+
+Q: For any given sorting algorithm, does increasing the array size always mean the sorting takes longer?
+A: It depends on the arrangement of the array. It could be that the algorithm may reach it's worse case, or not.
+
+Q: How does changing nrepeats change the plot?
+A: changing nrepeat will limit the potential of knowing how these algorithms perform.
+
+Q: Is your plot the exact same as your partner's plot, even with the same values of ntrials, by, and nrepeats?
+A: It was slightly different because of the speed of our computers (our assumption)
+
+Q: Optional: Look at the source code for BubbleSorter to WipingBubbleSorter. After looking at the plots, can you intuitively explain why WipingBubbleSorter is usually 2x as fast as BubbleSorter? (Hint: Consider the immobility of some elements when the swapping passes are single directional (i.e. only going forward), and how this "Wiping" strategy helps deal with that issue.) Can you come up with an example that shows the difference in runtime?
+A: Bubble sort go through each element one by one and compares. The wipingbubblesorter performs half as fast as the traditional bubble sort because it checks values ahead of time in O(1) speed (using even and odd values to switch between numbers). Our graph reveals wipingbubblesorter performing 3-5 milliseconds better.
+
+Summary:
+Overall, it is very impressive that there exists a Java graph which shows the runtime of these sorting algorithms. I played with the input and nrepeats and it surpises me how each algorithm holds as array of n grows larger.

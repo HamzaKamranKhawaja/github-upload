@@ -1,0 +1,23 @@
+Q: Is one GrowList implementation always better than the others?
+A: Not always because we need to consider how the others implement their worse case which could be in between O(N) and O(1).
+
+Q: Why is the runtime for N insertions into a geometrically resizing list a Theta(N) operation?
+A: Becuase how arrays are defined can lead into tricky resizing issues. Ex: ArithGrowList uses (_size + 1) instead of using _size * 2 to make up for growth.
+
+Q: Why is the runtime for N insertions into a arithmetically resizing list a Theta(N^2) operation?
+A: Because it often can repeat the same insertions twice and that can be seen as two loops. O(N^2).
+
+Q: How does the runtime per operation for the ArithGrowList compare to that of GeomGrowList and JavaGrowList? Specifically look at the non-accumulated plots and desribe the trends for how long each operation takes as a function of how many elements have already been inserted in the list.
+A: ArithGrowList performs the worst because it always results to the case of O(N) or O(N^2). It does not have O(1) implemented.
+
+Q: When are there spikes in the per operation runtime graphs for each of the implementations? Do these make sense to you? Hint: some of these should and others might not. Empirical runtime can be quite messy and depends on machine specifics which will be revealed in other subsequent classes like CS61C.
+A: Most of the graphs share a relation (like the GeomGrowList and JavaGrowList). And depending on the machine, memory addresses or how bits are stored may differ in this relationship.
+
+Q: Optional: Try changing the code for GeomGrowList to resize by a different factor. How does this effect the theoretical asymptotic runtime? How does this effect the plotted runtime?
+A: I changed this: int[] newArr = new int[_size * 10]; and all of a sudden I see a spike in the GeomGrowList, but it still does not perform as bad as the ArithGrowList.
+
+Q: Optional: Try changing the code for ArithGrowList to resize by adding a different fixed number of spots in the array. How does this effect the theoretical asymptotic runtime? How does this effect the plotted runtime?
+A: I changed this: int[] newArr = new int[_size * 2]; to be similar to GeomGrowList and it now runs even quicker than before with few spikes. I can argue it may have O(1) in some cases.
+
+Summary:
+overall changing how the int is initialized can drastically change the speed in which variables are inserted. This is mind blowing.
