@@ -2,6 +2,9 @@
  * University of California.  All rights reserved. */
 package loa;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static loa.Piece.*;
 
 /** An automated Player.
@@ -71,19 +74,69 @@ class MachinePlayer extends Player {
      *  on BOARD, does not set _foundMove. */
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        // FIXME
-        if (saveMove) {
-            _foundMove = null; // FIXME
+
+        if (depth == 0) {
+            return board.getSumdistances();
+            }
+
+        int bestscore = 0; //? 0 or something else
+        Board copied = new Board();
+        copied.copyFrom(board);
+        for (Move move : board.legalMoves()) {
+            copied.makeMove(move);
+        //the updated board and depth is used
+            int score = findMove(copied, depth - 1,saveMove,
+                    -sense, alpha, beta);
+            if (sense == 1 && score > bestscore) {
+                bestscore = score;
+            }
+            else if (sense == -1 && score < bestscore) {
+                bestscore = score;
+            }
+            if (board.turn() == WP) {
+                alpha = Math.max(score, alpha);
+                if (copied.piecesContiguous(WP)) {
+                    bestscore = WINNING_VALUE;
+                    alpha = WINNING_VALUE;
+                }
+            }
+            else {
+                beta = Math.min(score, beta);
+                if (copied.piecesContiguous(BP)) {
+                    _foundMove = move;
+                    break;
+                }
+            }
+
+            if (alpha >= beta) {
+                saveMove = true;
+            }
+            copied.retract();
+            if (saveMove) {
+                _foundMove = move; // FIXME
+                break;
+            }
         }
-        return 0; // FIXME
+        //Prune, how?  Break
+
+        return bestscore; // FIXME
     }
+
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 1;  // FIXME
+        return 7;  // FIXME
     }
 
     // FIXME: Other methods, variables here.
+    /** Return the score based on the current heuristic function */
+    private int findscore(Piece side, Board board) {
+        int sumdistances = 0;
+        /*for (int i = 0; i < ; i++) {*/
+
+        //}
+        return 1;
+    }
 
     /** Used to convey moves discovered by findMove. */
     private Move _foundMove;
