@@ -239,7 +239,7 @@ class Board {
                 _winner = _turn.opposite();
                 _winnerKnown = true;
             }
-            else if (movesMade() > _moveLimit) {
+            else if (movesMade() >= _moveLimit) {
                 _winner = EMP;
                 _winnerKnown = true;
             }
