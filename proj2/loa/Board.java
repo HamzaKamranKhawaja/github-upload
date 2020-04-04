@@ -245,6 +245,7 @@ class Board {
             }
             else {
                 _winner = null;
+                _winnerKnown = true;
             }
         }
         return _winner;
@@ -341,11 +342,11 @@ class Board {
                     _whiteRegionSizes.add(whiteSize);
                 }
             }
-            else if (get(sq) == BP) {
+            if (get(sq) == BP) {
                 int blackSize = numContig(sq, visited, BP);
                 if (blackSize != 0) {
                     _blackRegionSizes.add(blackSize);
-                }
+               }
             }
         }
 
