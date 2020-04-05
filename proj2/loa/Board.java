@@ -47,6 +47,7 @@ class Board {
     Board(Board board) {
         this();
         copyFrom(board);
+        this._subsetsInitialized = false;
     }
 
     /** Set my state to CONTENTS with SIDE to move. */
@@ -59,6 +60,7 @@ class Board {
             System.arraycopy(contents[i], 0, _board,
                     i * BOARD_SIZE, BOARD_SIZE );
         }
+        _subsetsInitialized = false;
 
     }
 
@@ -93,6 +95,7 @@ class Board {
         if (next != null) {
             _turn = next;
         }
+        _subsetsInitialized = false;
     }
 
     /** Set the square at SQ to V, without modifying the side that
@@ -129,6 +132,7 @@ class Board {
         set (endS, firstP);
         set (firstS, EMP);
         _turn = _turn.opposite();
+        _subsetsInitialized = false;
 
     }
 
@@ -154,6 +158,7 @@ class Board {
         }
         _moves.remove(_moves.size() - 1);
         _turn = _turn.opposite();
+        _subsetsInitialized = false;
 
     }
 
@@ -232,7 +237,12 @@ class Board {
     Piece winner() {
         if (!_winnerKnown) {
             // FIXME
-            if (piecesContiguous(_turn)) {
+            computeRegions();
+            if (piecesContiguous(_turn) && piecesContiguous(_turn.opposite())) {
+                _winner = _turn;
+                _winnerKnown = true;
+            }
+            else if (piecesContiguous(_turn)) {
                 _winner = _turn;
                 _winnerKnown = true;
             }
@@ -240,15 +250,14 @@ class Board {
                 _winner = _turn.opposite();
                 _winnerKnown = true;
             }
-            else if (movesMade() >= _moveLimit) {
+            else if (movesMade() > _moveLimit) {
                 _winner = EMP;
                 _winnerKnown = true;
             }
             else {
                 _winner = null;
-                _winnerKnown = true;
             }
-        }
+       }
         return _winner;
     }
 
@@ -330,9 +339,9 @@ class Board {
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
     public void computeRegions() {
-       /* if (_subsetsInitialized) {
+        if (_subsetsInitialized) {
             return;
-        }*/
+        }
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
         boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
@@ -353,7 +362,7 @@ class Board {
 
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
-        //_subsetsInitialized = true;
+        _subsetsInitialized = true;
     }
 
     /** Return the sizes of all the regions in the current union-find
