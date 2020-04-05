@@ -70,6 +70,7 @@ class Board {
     /** Set my state to a copy of BOARD. */
     void copyFrom(Board board) {
         if (board !=  this) {
+            _moveLimit = board._moveLimit;
             _turn = board._turn;
             System.arraycopy(board._board, 0, this._board,
                     0, board._board.length);
@@ -329,9 +330,9 @@ class Board {
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
     public void computeRegions() {
-        if (_subsetsInitialized) {
+       /* if (_subsetsInitialized) {
             return;
-        }
+        }*/
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
         boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
@@ -352,7 +353,7 @@ class Board {
 
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
-        _subsetsInitialized = true;
+        //_subsetsInitialized = true;
     }
 
     /** Return the sizes of all the regions in the current union-find
