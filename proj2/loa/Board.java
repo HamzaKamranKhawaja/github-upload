@@ -376,6 +376,22 @@ class Board {
         }
     }
 
+    /** A heuristic function that obtains the sum of the number of
+     * maximizing contiguous regions
+     * and subtract the number of minimizing contiguous regions
+      */
+    public int boardState() {
+        if (this.winner() == Maximizer) {
+            return WINNING_VALUE;
+        }
+        else if (this.winner() == Maximizer.opposite()) {
+            return -WINNING_VALUE;
+        }
+
+        return getRegionSizes(Maximizer).size()
+                - getRegionSizes(Maximizer.opposite()).size();
+    }
+
     // FIXME: Other methods, variables?
     /** Calculates sum of distances between all pieces of BLACK side and
      * subtract WHITE side distances ie BLACK is the maximizer */
@@ -453,4 +469,8 @@ class Board {
     private final ArrayList<Integer>
         _whiteRegionSizes = new ArrayList<>(),
         _blackRegionSizes = new ArrayList<>();
+
+    /** A position-score magnitude indicating a win (for white if positive,
+     *  black if negative). */
+    private static final int WINNING_VALUE = Integer.MAX_VALUE - 20;
 }

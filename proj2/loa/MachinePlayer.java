@@ -76,56 +76,53 @@ class MachinePlayer extends Player {
                          int sense, int alpha, int beta) {
 
         if (depth == 0) {
-            return board.getSumdistances();
+            return board.boardState();
             }
 
-        int bestscore = 0; //? 0 or something else
-        Board copied = new Board();
-        copied.copyFrom(board);
+        if (sense == 1) {
+            bestscore = INFTY;
+        } //BEFORE
+
+        else if (sense == -1) {
+            bestscore = -INFTY;
+        }
+
         for (Move move : board.legalMoves()) {
-            copied.makeMove(move);
+            board.makeMove(move);
         //the updated board and depth is used
-            int score = findMove(copied, depth - 1,saveMove,
+            int score = findMove(board, depth - 1, false,
                     -sense, alpha, beta);
             if (sense == 1 && score > bestscore) {
                 bestscore = score;
+                if (saveMove) {
+                    _foundMove = move;
+                }
             }
             else if (sense == -1 && score < bestscore) {
                 bestscore = score;
-            }
-            if (board.turn() == WP) {
-                alpha = Math.max(score, alpha);
-                if (copied.piecesContiguous(WP)) {
-                    bestscore = WINNING_VALUE;
-                    alpha = WINNING_VALUE;
+                if (saveMove) {
+                    _foundMove = move;
                 }
+
+            }
+            if (sense == 1) {
+                alpha = Math.max(bestscore, alpha);
             }
             else {
-                beta = Math.min(score, beta);
-                if (copied.piecesContiguous(BP)) {
-                    _foundMove = move;
-                    break;
-                }
+                beta = Math.min(bestscore, beta);
             }
-
             if (alpha >= beta) {
-                saveMove = true;
-            }
-            copied.retract();
-            if (saveMove) {
-                _foundMove = move; // FIXME
                 break;
             }
+            board.retract();
         }
-        //Prune, how?  Break
-
         return bestscore; // FIXME
     }
 
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 7;  // FIXME
+        return 2;  // FIXME
     }
 
     // FIXME: Other methods, variables here.
@@ -141,4 +138,6 @@ class MachinePlayer extends Player {
     /** Used to convey moves discovered by findMove. */
     private Move _foundMove;
 
+    /** Stores best score */
+    private int bestscore;
 }
