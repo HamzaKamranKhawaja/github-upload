@@ -394,7 +394,7 @@ class Board {
 
     // FIXME: Other methods, variables?
     /** Calculates sum of distances between all pieces of BLACK side and
-     * subtract WHITE side distances ie BLACK is the maximizer */
+     * subtract WHITE side distances ie BLACK is the minimizer */
 
     public int getSumdistances() {
         int distance = 0;

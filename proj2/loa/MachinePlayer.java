@@ -76,15 +76,16 @@ class MachinePlayer extends Player {
                          int sense, int alpha, int beta) {
 
         if (depth == 0) {
+            int value = board.boardState();
             return board.boardState();
             }
 
         if (sense == 1) {
-            bestscore = INFTY;
+            bestscore = -INFTY;
         } //BEFORE
 
         else if (sense == -1) {
-            bestscore = -INFTY;
+            bestscore = INFTY;
         }
 
         for (Move move : board.legalMoves()) {
@@ -122,7 +123,7 @@ class MachinePlayer extends Player {
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 2;  // FIXME
+        return 1;  // FIXME
     }
 
     // FIXME: Other methods, variables here.
