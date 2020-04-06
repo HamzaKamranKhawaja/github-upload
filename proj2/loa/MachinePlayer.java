@@ -53,14 +53,16 @@ class MachinePlayer extends Player {
     /** Return a move after searching the game tree to DEPTH>0 moves
      *  from the current position. Assumes the game is not over. */
     private Move searchForMove() {
-        Board work = new Board(getBoard());
+        //Board work = new Board(getBoard());
         int value;
-        assert side() == work.turn();
+        assert side() == getBoard().turn();
         _foundMove = null;
         if (side() == WP) {
-            value = findMove(work, chooseDepth(), true, 1, -INFTY, INFTY);
+          //value = findMove(work, chooseDepth(), true, 1, -INFTY, INFTY);
+            value = findMove(getBoard(), chooseDepth(), true, 1, -INFTY, INFTY);
+
         } else {
-            value = findMove(work, chooseDepth(), true, -1, -INFTY, INFTY);
+            value = findMove(getBoard(), chooseDepth(), true, -1, -INFTY, INFTY);
         }
         return _foundMove;
     }
@@ -80,10 +82,12 @@ class MachinePlayer extends Player {
 
         if (sense == 1) {
             bestscore = -INFTY;
+            nextbestscore = -INFTY;
         } //BEFORE
 
         else if (sense == -1) {
             bestscore = INFTY;
+            nextbestscore = INFTY;
         }
 
         for (Move move : board.legalMoves()) {
@@ -95,16 +99,25 @@ class MachinePlayer extends Player {
                         -sense, alpha, beta);
                 if (sense == 1 && score > bestscore) {
                     bestscore = score;
-                    if (saveMove) {
+                   /* if (saveMove) {
                         _foundMove = move;
-                    }
+                    }*/
                 } else if (sense == -1 && score < bestscore) {
                     bestscore = score;
-                    if (saveMove) {
+                   /* if (saveMove) {
                         _foundMove = move;
                     }
-
+*/
                 }
+                if (saveMove && score > nextbestscore) {
+                    nextbestscore = score;
+                    _foundMove = move;
+
+                } else if (saveMove && score < nextbestscore) {
+                    nextbestscore = score;
+                    _foundMove = move;
+                }
+
                 if (sense == 1) {
                     alpha = Math.max(bestscore, alpha);
                 } else {
@@ -140,4 +153,7 @@ class MachinePlayer extends Player {
 
     /** Stores best score */
     private int bestscore;
+
+    /** Stores the best score among the next moves */
+    private int nextbestscore;
 }

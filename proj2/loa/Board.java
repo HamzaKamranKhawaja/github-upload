@@ -451,7 +451,7 @@ class Board {
     protected Piece[] _board = new Piece[BOARD_SIZE * BOARD_SIZE];
 
 
-    /** Maximizer for the heuristic function GETSUMDISTANCE */
+    /** Maximizer for the heuristic functions */
     Piece Maximizer = WP;
     /** List of all unretracted moves on this board, in order. */
     private final ArrayList<Move> _moves = new ArrayList<>();
