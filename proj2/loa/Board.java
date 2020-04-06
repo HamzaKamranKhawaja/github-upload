@@ -390,8 +390,8 @@ class Board {
             return -WINNING_VALUE;
         }
 
-        return getRegionSizes(Maximizer).size()
-                - getRegionSizes(Maximizer.opposite()).size();
+        return -getRegionSizes(Maximizer).size()
+                + getRegionSizes(Maximizer.opposite()).size();
     }
 
     // FIXME: Other methods, variables?

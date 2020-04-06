@@ -93,10 +93,10 @@ class MachinePlayer extends Player {
         for (Move move : board.legalMoves()) {
             if (board.isLegal(move)) {
                 board.makeMove(move);
-
                 //the updated board and depth is used
                 int score = findMove(board, depth - 1, false,
                         -sense, alpha, beta);
+                board.retract();
                 if (sense == 1 && score > bestscore) {
                     bestscore = score;
                    /* if (saveMove) {
@@ -126,7 +126,6 @@ class MachinePlayer extends Player {
                 if (alpha >= beta) {
                     break;
                 }
-                board.retract();
             }
         }
         return bestscore; // FIXME
@@ -135,7 +134,7 @@ class MachinePlayer extends Player {
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 5;  // FIXME
+        return 6;  // FIXME
     }
 
     // FIXME: Other methods, variables here.
