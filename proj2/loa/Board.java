@@ -128,6 +128,7 @@ class Board {
         if (firstP != endP && endP != EMP) {
             move = move.captureMove();
         }
+        System.out.println(this.toString());
         _moves.add(move);
         set (endS, firstP);
         set (firstS, EMP);
