@@ -159,6 +159,7 @@ class Board {
         _moves.remove(_moves.size() - 1);
         _turn = _turn.opposite();
         _subsetsInitialized = false;
+        _winnerKnown = false;
 
     }
 
@@ -238,19 +239,20 @@ class Board {
         if (!_winnerKnown) {
             // FIXME
             computeRegions();
-            if (piecesContiguous(_turn) && piecesContiguous(_turn.opposite())) {
-                _winner = _turn;
-                _winnerKnown = true;
-            }
-            else if (piecesContiguous(_turn)) {
-                _winner = _turn;
+            if (piecesContiguous(_turn) &&
+                    piecesContiguous(_turn.opposite())) {
+                _winner = _turn.opposite();
                 _winnerKnown = true;
             }
             else if (piecesContiguous(_turn.opposite())) {
                 _winner = _turn.opposite();
                 _winnerKnown = true;
             }
-            else if (movesMade() > _moveLimit) {
+            else if (piecesContiguous(_turn)) {
+                _winner = _turn;
+                _winnerKnown = true;
+            }
+            else if (movesMade() >= _moveLimit) {
                 _winner = EMP;
                 _winnerKnown = true;
             }
