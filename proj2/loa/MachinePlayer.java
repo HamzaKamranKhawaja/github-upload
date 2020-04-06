@@ -74,9 +74,7 @@ class MachinePlayer extends Player {
      *  on BOARD, does not set _foundMove. */
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-
         if (depth == 0) {
-            int value = board.boardState();
             return board.boardState();
             }
 
@@ -89,33 +87,34 @@ class MachinePlayer extends Player {
         }
 
         for (Move move : board.legalMoves()) {
-            board.makeMove(move);
-        //the updated board and depth is used
-            int score = findMove(board, depth - 1, false,
-                    -sense, alpha, beta);
-            if (sense == 1 && score > bestscore) {
-                bestscore = score;
-                if (saveMove) {
-                    _foundMove = move;
-                }
-            }
-            else if (sense == -1 && score < bestscore) {
-                bestscore = score;
-                if (saveMove) {
-                    _foundMove = move;
-                }
+            if (board.isLegal(move)) {
+                board.makeMove(move);
 
+                //the updated board and depth is used
+                int score = findMove(board, depth - 1, false,
+                        -sense, alpha, beta);
+                if (sense == 1 && score > bestscore) {
+                    bestscore = score;
+                    if (saveMove) {
+                        _foundMove = move;
+                    }
+                } else if (sense == -1 && score < bestscore) {
+                    bestscore = score;
+                    if (saveMove) {
+                        _foundMove = move;
+                    }
+
+                }
+                if (sense == 1) {
+                    alpha = Math.max(bestscore, alpha);
+                } else {
+                    beta = Math.min(bestscore, beta);
+                }
+                if (alpha >= beta) {
+                    break;
+                }
+                board.retract();
             }
-            if (sense == 1) {
-                alpha = Math.max(bestscore, alpha);
-            }
-            else {
-                beta = Math.min(bestscore, beta);
-            }
-            if (alpha >= beta) {
-                break;
-            }
-            board.retract();
         }
         return bestscore; // FIXME
     }

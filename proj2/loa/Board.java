@@ -172,10 +172,10 @@ class Board {
     /** Return true iff FROM - TO is a legal move for the player currently on
      *  move. */
     boolean isLegal(Square from, Square to) {
-        if (from.index() < 0 || from.index() >= _board.length) {
+        if (from.index() < 0 || from.index() >= ALL_SQUARES.length) {
             return false;
         }
-        if (to.index() < 0 || to.index() >= _board.length) {
+        if (to.index() < 0 || to.index() >= ALL_SQUARES.length) {
             return false;
         }
         if (!from.isValidMove(to)) {
