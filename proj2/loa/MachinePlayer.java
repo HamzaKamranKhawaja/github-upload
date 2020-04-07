@@ -73,96 +73,42 @@ class MachinePlayer extends Player {
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
         if (depth == 0) {
-            return board.heuristicEstimate();
+            return board.boardState();
         }
         if (sense == 1) {
             alpha = -INFTY;
-            for (Move move: board.legalMoves()) {
-                if (board.isLegal(move)) {
-                    board.makeMove(move);
-                    int score = findMove(board, depth - 1, false, -sense
-                            , alpha, beta);
-                    board.retract();
-                    if (score >= alpha) {
-                        bestscore = score;
-                        if (saveMove) {
-                            _foundMove = move;
-                        }
-                    }
-                    alpha = Math.max(alpha, score);
-                    if (alpha >= beta) {
-                        break;
-                    }
-                }
-            }
-            return bestscore;
-        } else {
-            beta = INFTY;
-            for (Move move : board.legalMoves()) {
-                if (board.isLegal(move)) {
-                    board.makeMove(move);
-                    int score = findMove(board, depth - 1, true, -sense, alpha, beta);
-                   board.retract();
-                   if (score < bestscore) {
-                       bestscore = score;
-                       if (saveMove) {
-                           _foundMove = move;
-                       }
-                   }
-                    beta = Math.min(beta, bestscore);
-                   if (alpha >= beta) {
-                       break;
-                   }
-                }
-            }
-        }
-        return bestscore;
-    }
-
-
-       /* if (sense == 1) {
-            bestscore = -INFTY;
-            nextbestscore = -INFTY;
-        } else if (sense == -1) {
-            bestscore = INFTY;
-            nextbestscore = INFTY;
-        }
-        for (Move move : board.legalMoves()) {
-            if (board.isLegal(move)) {
-                board.makeMove(move);
-                int score = findMove(board, depth - 1, false,
+            for (int i = 0; i < board.legalMoves().size(); i = i + 1) {
+                board.makeMove(board.legalMoves().get(i));
+                bestscore = findMove(board, depth - 1, false,
                         -sense, alpha, beta);
                 board.retract();
-                if (sense == 1 && score > bestscore) {
-                    bestscore = score;
-                } else if (sense == -1 && score < bestscore) {
-                    bestscore = score;
+                if (bestscore >= alpha && saveMove) {
+                    _foundMove = board.legalMoves().get(i);
                 }
-               // if (saveMove && sense == 1 && score >= nextbestscore) {
-                if (sense == 1 && score >= nextbestscore) {
-                    nextbestscore = score;
-                    if (saveMove) {
-                        _foundMove = move;
-                    }
-                } //else if (saveMove && sense == -1 && score <= nextbestscore) {
-                else if (sense == -1 && score <= nextbestscore) {
-                    nextbestscore = score;
-                   if (saveMove) {
-                    _foundMove = move;
-                   }
-                }
-            }
-                if (sense == 1) {
-                    alpha = Math.max(bestscore, alpha);
-                } else {
-                    beta = Math.min(bestscore, beta);
-                }
+                alpha = Math.max(alpha, bestscore);
                 if (alpha >= beta) {
                     break;
                 }
             }
-        return bestscore;
-    }*/
+            return alpha;
+        } else {
+            beta = INFTY;
+            for (int i = 0; i < board.legalMoves().size(); i = i + 1) {
+                board.makeMove(board.legalMoves().get(i));
+                bestscore = findMove(board, depth - 1,
+                        true, -sense, alpha, beta);
+                board.retract();
+                if (bestscore < beta && saveMove) {
+                    _foundMove = board.legalMoves().get(i);
+                }
+                beta = Math.min(beta, bestscore);
+                if (alpha >= beta) {
+                    break;
+                }
+            }
+        }
+        return beta;
+    }
     /** Return a search depth for the current position. */
     private int chooseDepth() {
         return 3;

@@ -287,7 +287,7 @@ class Board {
             int distance = from.distance(to);
             for (int i = distance - 1; i > 0; i--) {
                 Square sq = from.moveDest(direction, i);
-                if (sq != null) {
+                if (sq != null && get(sq) != EMP) {
                     if (get(sq) == get(from).opposite()) {
                         return true;
                     }
@@ -369,37 +369,14 @@ class Board {
         } else if (piecesContiguous(maximizer.opposite())) {
             return -WINNING_VALUE;
         }
-        System.out.println("Im here");
         int value = -getRegionSizes(maximizer).size()
                 + getRegionSizes(maximizer.opposite()).size();
         if (value > 0) {
             return value + (int) (Math.random() * 100);
-        }
-
-        else if (value < 0) {
+        } else if (value < 0) {
             return value - (int) (Math.random() * 100);
         } else {
             return 0;
-        }
-    }
-
-    public int heuristicEstimate() {
-        computeRegions();
-        if (piecesContiguous(WP)) {
-            return Integer.MAX_VALUE;
-        } else if (piecesContiguous(BP)) {
-            return -Integer.MAX_VALUE;
-        }
-        if (turn() == WP) {
-            return 3* getRegionSizes(WP).get(0)
-                    - 3* getRegionSizes(BP).get(0)
-                    + 4 * getRegionSizes(BP).size()
-                    - 4 * getRegionSizes(WP).size();
-        } else {
-            return -(3 * getRegionSizes(BP).get(0)
-                    - 3* getRegionSizes(BP).get(0)
-                    + 4 * getRegionSizes(WP).size()
-                    - 4 * getRegionSizes(WP).size());
         }
     }
 

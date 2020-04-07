@@ -218,4 +218,10 @@ public class BoardTest {
         assertEquals("winner after reverting and checking", WP, winner);
 
     }
+    @Test
+    public void testIllegal() {
+        Board b = new Board(BOARD1, BP);
+        List<Move> allMoves = b.legalMoves();
+        assertEquals(37, allMoves.size());
+    }
 }
