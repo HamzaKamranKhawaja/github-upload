@@ -1,5 +1,5 @@
 /* Skeleton Copyright (C) 2015, 2020 Paul N. Hilfinger and the Regents of the
- * University of California.  All rights reserved. */
+ University of California.  All rights reserved. */
 package loa;
 import static loa.Piece.*;
 
@@ -53,12 +53,10 @@ class MachinePlayer extends Player {
         assert side() == getBoard().turn();
         _foundMove = null;
         if (side() == WP) {
-            value = findMove(getBoard(), chooseDepth(),
-                    true, 1, -INFTY, INFTY);
-
+            value = findMove(getBoard(), chooseDepth(), true, 1, -INFTY, INFTY);
         } else {
-            value = findMove(getBoard(), chooseDepth(),
-                    true, -1, -INFTY, INFTY);
+            value = findMove(getBoard(),
+                    chooseDepth(), true, -1, -INFTY, INFTY);
         }
         return _foundMove;
     }
@@ -76,42 +74,49 @@ class MachinePlayer extends Player {
             return board.boardState();
         }
         if (sense == 1) {
-            alpha = -INFTY;
-            for (int i = 0; i < board.legalMoves().size(); i = i + 1) {
-                board.makeMove(board.legalMoves().get(i));
-                bestscore = findMove(board, depth - 1, false,
+            bestscore = -INFTY;
+            nextbestscore = -INFTY;
+        } else if (sense == -1) {
+            bestscore = INFTY;
+            nextbestscore = INFTY;
+        }
+
+        for (Move move : board.legalMoves()) {
+            if (board.isLegal(move)) {
+                board.makeMove(move);
+                int score = findMove(board, depth - 1, false,
                         -sense, alpha, beta);
                 board.retract();
-                if (bestscore >= alpha && saveMove) {
-                    _foundMove = board.legalMoves().get(i);
+                if (sense == 1 && score > bestscore) {
+                    bestscore = score;
+                } else if (sense == -1 && score < bestscore) {
+                    bestscore = score;
                 }
-                alpha = Math.max(alpha, bestscore);
-                if (alpha >= beta) {
-                    break;
+                if (saveMove && score > nextbestscore) {
+                    nextbestscore = score;
+                    _foundMove = move;
+
+                } else if (saveMove && score < nextbestscore) {
+                    nextbestscore = score;
+                    _foundMove = move;
                 }
-            }
-            return alpha;
-        } else {
-            beta = INFTY;
-            for (int i = 0; i < board.legalMoves().size(); i = i + 1) {
-                board.makeMove(board.legalMoves().get(i));
-                bestscore = findMove(board, depth - 1,
-                        true, -sense, alpha, beta);
-                board.retract();
-                if (bestscore < beta && saveMove) {
-                    _foundMove = board.legalMoves().get(i);
+
+                if (sense == 1) {
+                    alpha = Math.max(bestscore, alpha);
+                } else {
+                    beta = Math.min(bestscore, beta);
                 }
-                beta = Math.min(beta, bestscore);
                 if (alpha >= beta) {
                     break;
                 }
             }
         }
-        return beta;
+        return bestscore;
     }
+
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 3;
+        return 5;
     }
 
     /** Used to convey moves discovered by findMove. */

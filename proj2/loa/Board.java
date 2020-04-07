@@ -287,7 +287,7 @@ class Board {
             int distance = from.distance(to);
             for (int i = distance - 1; i > 0; i--) {
                 Square sq = from.moveDest(direction, i);
-                if (sq != null && get(sq) != EMP) {
+                if (sq != null) {
                     if (get(sq) == get(from).opposite()) {
                         return true;
                     }
