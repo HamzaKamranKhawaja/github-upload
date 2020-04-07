@@ -1,21 +1,17 @@
 /* Skeleton Copyright (C) 2015, 2020 Paul N. Hilfinger and the Regents of the
  * University of California.  All rights reserved. */
 package loa;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
-import java.util.Random;
-
 import java.util.regex.Pattern;
-
 import static loa.Piece.*;
 import static loa.Square.*;
 
 /** Represents the state of a game of Lines of Action.
- *  @author
+ *  @author Hamza Kamran
  */
 class Board {
 
@@ -53,13 +49,11 @@ class Board {
 
     /** Set my state to CONTENTS with SIDE to move. */
     void initialize(Piece[][] contents, Piece side) {
-        // FIXME
         _turn = side;
         _moveLimit = DEFAULT_MOVE_LIMIT;
-        //to initialize the board. Copy contents from 2-D CONTENTS to 1-D _BOARD
         for (int i = 0; i < contents.length; i++) {
             System.arraycopy(contents[i], 0, _board,
-                    i * BOARD_SIZE, BOARD_SIZE );
+                    i * BOARD_SIZE, BOARD_SIZE);
         }
         _subsetsInitialized = false;
 
@@ -78,7 +72,6 @@ class Board {
             System.arraycopy(board._board, 0, this._board,
                     0, board._board.length);
         }
-        //FIXME? OR DONE
     }
 
     /** Return the contents of the square at SQ. */
@@ -89,7 +82,6 @@ class Board {
     /** Set the square at SQ to V and set the side that is to move next
      *  to NEXT, if NEXT is not null. */
     void set(Square sq, Piece v, Piece next) {
-        // FIXME? Or done?
         int posn = sq.index();
         this._board[posn] = v;
 
@@ -120,7 +112,6 @@ class Board {
      *  the capturing move. */
     void makeMove(Move move) {
         assert isLegal(move);
-        // FIXME? MAKEMOVE itself uses MOVE.captureMove() ?
         Square firstS = move.getFrom();
         Piece firstP = get(firstS);
         Square endS = move.getTo();
@@ -130,19 +121,16 @@ class Board {
             move = move.captureMove();
         }
         _moves.add(move);
-        set (endS, firstP);
-        set (firstS, EMP);
+        set(endS, firstP);
+        set(firstS, EMP);
         _turn = _turn.opposite();
         _subsetsInitialized = false;
-
     }
 
     /** Retract (unmake) one move, returning to the state immediately before
      *  that move.  Requires that movesMade () > 0. */
     void retract() {
         assert movesMade() > 0;
-        // FIXME
-
         Move lastMove = _moves.get(_moves.size() - 1);
         Square firstS = lastMove.getFrom();
         Piece firstP = get(firstS);
@@ -152,8 +140,7 @@ class Board {
         if (lastMove.isCapture()) {
             set(firstS, endP);
             set(endS, endP.opposite());
-        }
-        else {
+        } else {
             set(firstS, endP);
             set(endS, EMP);
         }
@@ -216,10 +203,8 @@ class Board {
                     }
                 }
             }
-            }
-
-
-        return moves;  // FIXME
+        }
+        return moves;
     }
 
     /** Return true iff the game is over (either player has all his
@@ -238,29 +223,24 @@ class Board {
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
         if (!_winnerKnown) {
-            // FIXME
             computeRegions();
-            if (piecesContiguous(_turn) &&
-                    piecesContiguous(_turn.opposite())) {
+            if (piecesContiguous(_turn)
+                    && piecesContiguous(_turn.opposite())) {
                 _winner = _turn.opposite();
                 _winnerKnown = true;
-            }
-            else if (piecesContiguous(_turn.opposite())) {
+            } else if (piecesContiguous(_turn.opposite())) {
                 _winner = _turn.opposite();
                 _winnerKnown = true;
-            }
-            else if (piecesContiguous(_turn)) {
+            } else if (piecesContiguous(_turn)) {
                 _winner = _turn;
                 _winnerKnown = true;
-            }
-            else if (movesMade() >= _moveLimit) {
+            } else if (movesMade() >= _moveLimit) {
                 _winner = EMP;
                 _winnerKnown = true;
-            }
-            else {
+            } else {
                 _winner = null;
             }
-       }
+        }
         return _winner;
     }
 
@@ -302,7 +282,7 @@ class Board {
     private boolean blocked(Square from, Square to) {
         if (get(to) == get(from)) {
             return true;
-        } else { ;
+        } else {
             int direction = from.direction(to);
             int distance = from.distance(to);
             for (int i = distance - 1; i > 0; i--) {
@@ -313,7 +293,7 @@ class Board {
                     }
                 }
             }
-            return false; // FIXME
+            return false;
         }
     }
 
@@ -324,11 +304,9 @@ class Board {
     public int numContig(Square sq, boolean[][] visited, Piece p) {
         if (get(sq) == EMP) {
             return 0;
-        }
-        else if (get(sq) != p) {
+        } else if (get(sq) != p) {
             return 0;
-        }
-        else if (visited[sq.row()][sq.col()]) {
+        } else if (visited[sq.row()][sq.col()]) {
             return 0;
         }
         int counter = 1;
@@ -337,7 +315,7 @@ class Board {
         for (Square adjsq: allsquares) {
             counter = counter + numContig(adjsq, visited, p);
         }
-        return counter;  // FIXME
+        return counter;
     }
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
@@ -359,7 +337,7 @@ class Board {
                 int blackSize = numContig(sq, visited, BP);
                 if (blackSize != 0) {
                     _blackRegionSizes.add(blackSize);
-               }
+                }
             }
         }
 
@@ -380,45 +358,64 @@ class Board {
     }
 
     /** A heuristic function that obtains the sum of the number of
-     * maximizing contiguous regions
-     * and subtract the number of minimizing contiguous regions
+     * maximizing contiguous regions.
+     * @return value
+     *jldkfj dskjf
+     * and subtract the number of minimizing contiguous regions.
       */
     public int boardState() {
-        if (piecesContiguous(Maximizer)) {
+        if (piecesContiguous(maximizer)) {
             return WINNING_VALUE;
-        }
-        else if (piecesContiguous(Maximizer.opposite())) {
+        } else if (piecesContiguous(maximizer.opposite())) {
             return -WINNING_VALUE;
         }
-        int value = -getRegionSizes(Maximizer).size()
-                + getRegionSizes(Maximizer.opposite()).size();
+        System.out.println("Im here");
+        int value = -getRegionSizes(maximizer).size()
+                + getRegionSizes(maximizer.opposite()).size();
         if (value > 0) {
-            return value + (int)(Math.random() * 100);
-            //return (int)(Math.random() * (value * 5 + 1));
+            return value + (int) (Math.random() * 100);
         }
-        if (value < 0) {
-            return value - (int)(Math.random() * 100);
-            //return (int)(Math.random() * (value * 5 - 1));
-        }
-        else {
-            return (int)(Math.random());
+
+        else if (value < 0) {
+            return value - (int) (Math.random() * 100);
+        } else {
+            return 0;
         }
     }
 
-    // FIXME: Other methods, variables?
-    /** Calculates sum of distances between all pieces of BLACK side and
-     * subtract WHITE side distances ie BLACK is the minimizer */
+    public int heuristicEstimate() {
+        computeRegions();
+        if (piecesContiguous(WP)) {
+            return Integer.MAX_VALUE;
+        } else if (piecesContiguous(BP)) {
+            return -Integer.MAX_VALUE;
+        }
+        if (turn() == WP) {
+            return 3* getRegionSizes(WP).get(0)
+                    - 3* getRegionSizes(BP).get(0)
+                    + 4 * getRegionSizes(BP).size()
+                    - 4 * getRegionSizes(WP).size();
+        } else {
+            return -(3 * getRegionSizes(BP).get(0)
+                    - 3* getRegionSizes(BP).get(0)
+                    + 4 * getRegionSizes(WP).size()
+                    - 4 * getRegionSizes(WP).size());
+        }
+    }
+
+    /** Calculates sum of distances between all pieces of BLACK side and.
+     * @return distance dkfjfk s
+     * subtract WHITE side distances ie BLACK is the minimizer. */
 
     public int getSumdistances() {
         int distance = 0;
         for (Square sq : ALL_SQUARES) {
             for (Square sq2 : ALL_SQUARES) {
-                if (get(sq) == Maximizer.opposite() && !sq.equals(sq2)
-                        && Maximizer.opposite() == get(sq2)) {
+                if (get(sq) == maximizer.opposite() && !sq.equals(sq2)
+                        && maximizer.opposite() == get(sq2)) {
                     distance += sq.distance(sq2);
-                }
-                else if (get(sq) == Maximizer && !sq.equals(sq2)
-                        && Maximizer == get(sq2)) {
+                } else if (get(sq) == maximizer && !sq.equals(sq2)
+                        && maximizer == get(sq2)) {
                     distance -= sq.distance(sq2);
                 }
             }
@@ -426,13 +423,16 @@ class Board {
         return distance;
     }
 
-    /** Returns the number of non-EMP pieces in both a direction and its opposite,
+    /**Returns the number of non-EMP pieces
+     * in both a direction and its opposite.
+     * @param direction dkjfhdfs
+     * @param from hdsifkjhiodsf
      * defined as (direction + 4) % 8.
      */
-    protected  int getPiecesInLine (int direction, Square from) {
+    protected int getPiecesInLine(int direction, Square from) {
         int pieces = 1;
         int oppositedir = (direction + 4) % 8;
-        for (int i = 1; i < BOARD_SIZE ; i++) {
+        for (int i = 1; i < BOARD_SIZE; i++) {
             Square indirection = from.moveDest(direction, i);
             Square awaydirection = from.moveDest(oppositedir, i);
             if (indirection != null && get(indirection) != EMP) {
@@ -457,12 +457,12 @@ class Board {
         { EMP, BP,  BP,  BP,  BP,  BP,  BP,  EMP }
     };
 
-    /** Current contents of the board.  Square S is at _board[S.index()]. */
+    /** Current contents of the board. Square S is at _board[S.index()]. */
     protected Piece[] _board = new Piece[BOARD_SIZE * BOARD_SIZE];
 
 
-    /** Maximizer for the heuristic functions */
-    Piece Maximizer = WP;
+    /** Maximizer for the heuristic functions. */
+    protected Piece maximizer = WP;
     /** List of all unretracted moves on this board, in order. */
     private final ArrayList<Move> _moves = new ArrayList<>();
     /** Current side on move. */

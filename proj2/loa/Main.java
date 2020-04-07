@@ -38,11 +38,9 @@ public class Main {
             new CommandArgs("--debug=(\\d+){0,1} --display{0,1} --strict{0,1} "
                             + "--log={0,1} --=(.*){0,2}",
                             args);
-
         if (!options.ok()) {
             usage();
         }
-
         setStrict(options.contains("--strict"));
 
         if (options.contains("--debug")) {
@@ -67,10 +65,8 @@ public class Main {
         } else if (options.contains("--display")) {
             try {
                 System.in.close();
-                //System.err.println("Display option not implemented.");
-                //System.exit(2);
             } catch (IOException dummy) {
-                /* Ignore IOException. */
+                /* Ignore IOException */
             }
         }
 
@@ -111,11 +107,9 @@ public class Main {
                 error(1, "Could not open log file");
             }
         }
-
         return new Game(view, log, reporter, manualPlayer,
                         new MachinePlayer(), options.contains("--strict"));
     }
-
     /** Print brief description of the command-line format. */
     static void usage() {
         printResource(USAGE);

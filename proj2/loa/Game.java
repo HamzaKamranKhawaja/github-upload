@@ -15,7 +15,7 @@ import static loa.Main.*;
 import static loa.Utils.*;
 
 /** Represents one game of Lines of Action.
- *  @author  */
+ *  @author Hamza Kamran Khawaja */
 class Game {
 
     /** Number of milliseconds in 1 second. */
@@ -125,7 +125,8 @@ class Game {
                 break;
             case "seed": seedCommand(command.group(2));
                 break;
-            case "set": setCommand(command.group(2), command.group(3).toLowerCase(),
+            case "set": setCommand(command.group(2),
+                    command.group(3).toLowerCase(),
                            command.group(4).toLowerCase());
                 break;
             case "undo": undo();
@@ -308,10 +309,9 @@ class Game {
         if (this.getBoard().movesMade() != 0) {
             if (_white.isManual() && _black.isManual()) {
                 this.getBoard().retract();
-            }
-            else if (_white.isManual() || _black.isManual()) {
-                   this.getBoard().retract();
-                   this.getBoard().retract();
+            } else if (_white.isManual() || _black.isManual()) {
+                this.getBoard().retract();
+                this.getBoard().retract();
             }
             _view.update(this);
         }

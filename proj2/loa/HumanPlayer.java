@@ -3,7 +3,7 @@
 package loa;
 
 /** A Player that prompts for moves and reads them from its Game.
- *  @author
+ *  @author Hamza Kamran
  */
 class HumanPlayer extends Player {
 
@@ -23,7 +23,7 @@ class HumanPlayer extends Player {
     String getMove() {
         Game thisgame = getGame();
         String line = thisgame.readLine(true);
-        return line;          // FIXME
+        return line;
     }
 
     @Override

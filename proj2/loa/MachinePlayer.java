@@ -1,14 +1,10 @@
 /* Skeleton Copyright (C) 2015, 2020 Paul N. Hilfinger and the Regents of the
  * University of California.  All rights reserved. */
 package loa;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static loa.Piece.*;
 
 /** An automated Player.
- *  @author
+ *  @author Hamza Kamran Khawaja
  */
 class MachinePlayer extends Player {
 
@@ -53,16 +49,16 @@ class MachinePlayer extends Player {
     /** Return a move after searching the game tree to DEPTH>0 moves
      *  from the current position. Assumes the game is not over. */
     private Move searchForMove() {
-        //Board work = new Board(getBoard());
         int value;
         assert side() == getBoard().turn();
         _foundMove = null;
         if (side() == WP) {
-          //value = findMove(work, chooseDepth(), true, 1, -INFTY, INFTY);
-            value = findMove(getBoard(), chooseDepth(), true, 1, -INFTY, INFTY);
+            value = findMove(getBoard(), chooseDepth(),
+                    true, 1, -INFTY, INFTY);
 
         } else {
-            value = findMove(getBoard(), chooseDepth(), true, -1, -INFTY, INFTY);
+            value = findMove(getBoard(), chooseDepth(),
+                    true, -1, -INFTY, INFTY);
         }
         return _foundMove;
     }
@@ -77,55 +73,85 @@ class MachinePlayer extends Player {
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
         if (depth == 0) {
-            return board.boardState();
-            }
-
-        if (sense == 1) {
-            bestscore = -INFTY;
-           // nextbestscore = -INFTY;
-        } //BEFORE
-
-        else if (sense == -1) {
-            bestscore = INFTY;
-          //  nextbestscore = INFTY;
+            return board.heuristicEstimate();
         }
+        if (sense == 1) {
+            alpha = -INFTY;
+            for (Move move: board.legalMoves()) {
+                if (board.isLegal(move)) {
+                    board.makeMove(move);
+                    int score = findMove(board, depth - 1, false, -sense
+                            , alpha, beta);
+                    board.retract();
+                    if (score >= alpha) {
+                        bestscore = score;
+                        if (saveMove) {
+                            _foundMove = move;
+                        }
+                    }
+                    alpha = Math.max(alpha, score);
+                    if (alpha >= beta) {
+                        break;
+                    }
+                }
+            }
+            return bestscore;
+        } else {
+            beta = INFTY;
+            for (Move move : board.legalMoves()) {
+                if (board.isLegal(move)) {
+                    board.makeMove(move);
+                    int score = findMove(board, depth - 1, true, -sense, alpha, beta);
+                   board.retract();
+                   if (score < bestscore) {
+                       bestscore = score;
+                       if (saveMove) {
+                           _foundMove = move;
+                       }
+                   }
+                    beta = Math.min(beta, bestscore);
+                   if (alpha >= beta) {
+                       break;
+                   }
+                }
+            }
+        }
+        return bestscore;
+    }
 
+
+       /* if (sense == 1) {
+            bestscore = -INFTY;
+            nextbestscore = -INFTY;
+        } else if (sense == -1) {
+            bestscore = INFTY;
+            nextbestscore = INFTY;
+        }
         for (Move move : board.legalMoves()) {
             if (board.isLegal(move)) {
                 board.makeMove(move);
-                //the updated board and depth is used
                 int score = findMove(board, depth - 1, false,
                         -sense, alpha, beta);
                 board.retract();
                 if (sense == 1 && score > bestscore) {
                     bestscore = score;
-                  /* if (saveMove) {
-                        _foundMove = move;
-                       System.out.println(_foundMove.toString());
-
-                   }*/
                 } else if (sense == -1 && score < bestscore) {
                     bestscore = score;
-                   /* if (saveMove) {
+                }
+               // if (saveMove && sense == 1 && score >= nextbestscore) {
+                if (sense == 1 && score >= nextbestscore) {
+                    nextbestscore = score;
+                    if (saveMove) {
                         _foundMove = move;
-                        System.out.println(_foundMove.toString());
-                    }*/
-
-                }
-               /* if (saveMove) {
-                    _foundMove = move;
-                    System.out.println(_foundMove.toString());
-
-                }*/
-                if (saveMove && sense == 1 && score >= nextbestscore) {
+                    }
+                } //else if (saveMove && sense == -1 && score <= nextbestscore) {
+                else if (sense == -1 && score <= nextbestscore) {
                     nextbestscore = score;
+                   if (saveMove) {
                     _foundMove = move;
+                   }
                 }
-                else if (saveMove && sense == -1 && score < nextbestscore){
-                    nextbestscore = score;
-                    _foundMove = move;
-                    System.out.println(_foundMove.toString());
-                }
+            }
                 if (sense == 1) {
                     alpha = Math.max(bestscore, alpha);
                 } else {
@@ -135,24 +161,11 @@ class MachinePlayer extends Player {
                     break;
                 }
             }
-        }
-        return bestscore ;
-    }
-
-
+        return bestscore;
+    }*/
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 3;  // FIXME
-    }
-
-    // FIXME: Other methods, variables here.
-    /** Return the score based on the current heuristic function */
-    private int findscore(Piece side, Board board) {
-        int sumdistances = 0;
-        /*for (int i = 0; i < ; i++) {*/
-
-        //}
-        return 1;
+        return 3;
     }
 
     /** Used to convey moves discovered by findMove. */

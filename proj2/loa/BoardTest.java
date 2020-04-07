@@ -1,22 +1,16 @@
 /* Skeleton Copyright (C) 2015, 2020 Paul N. Hilfinger and the Regents of the
  * University of California.  All rights reserved. */
 package loa;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import static loa.Square.BOARD_SIZE;
 import static org.junit.Assert.*;
-
 import static loa.Piece.*;
 import static loa.Square.sq;
 import static loa.Move.mv;
 
 /** Tests of the Board class API.
- *  @author
+ *  @ Hamza Kamran
  */
 public class BoardTest {
 

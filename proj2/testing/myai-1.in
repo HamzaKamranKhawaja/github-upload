@@ -1,0 +1,9 @@
+#No AI used
+#checking legalities
+manual White
+manual Black
+b1-b3
+a2-c2
+f1-f3
+dump
+#should expect no winnings

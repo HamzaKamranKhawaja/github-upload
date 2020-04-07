@@ -1,26 +1,18 @@
 /* Skeleton Copyright (C) 2015, 2020 Paul N. Hilfinger and the Regents of the
  * University of California.  All rights reserved. */
 package loa;
-
 import ucb.gui2.Pad;
-
 import java.util.concurrent.ArrayBlockingQueue;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
-import static org.junit.Assert.*;
-
-import static loa.Piece.*;
 import static loa.Square.sq;
 
 /** A widget that displays a Loa game.
- *  @author
+ *  @author Hamza Kamran Khawaja
  */
 class BoardWidget extends Pad {
-
-    /* Parameters controlling sizes, speeds, colors, and fonts. */
 
     /** Squares on each side of the board. */
     static final int SIZE = Square.BOARD_SIZE;
@@ -94,7 +86,6 @@ class BoardWidget extends Pad {
         for (Square sq : Square.ALL_SQUARES) {
             drawPiece(g, sq);
         }
-        // More? FIXME
     }
 
     /** Draw the contents of S on G. */
@@ -122,7 +113,6 @@ class BoardWidget extends Pad {
 
     /** Handle a mouse-button push on S. */
     private void mousePressed(Square s) {
-        // FIXME
         if (_board.get(s).equals(_board.turn())) {
             _pressed = s;
         }
@@ -132,7 +122,6 @@ class BoardWidget extends Pad {
 
     /** Handle a mouse-button release on S. */
     private void mouseReleased(Square s) {
-        // FIXME
         _released = s;
         repaint();
         Move move = Move.mv(_pressed, _released);
@@ -169,7 +158,6 @@ class BoardWidget extends Pad {
     /** Revise the displayed board according to BOARD. */
     synchronized void update(Board board) {
         _board.copyFrom(board);
-        // FIXME?
         repaint();
     }
 
@@ -178,7 +166,6 @@ class BoardWidget extends Pad {
      *  the board. */
     void setMoveCollection(boolean collecting) {
         _acceptingMoves = collecting;
-        // FIXME?
         repaint();
     }
 
@@ -214,10 +201,10 @@ class BoardWidget extends Pad {
     /** True iff accepting moves from user. */
     private boolean _acceptingMoves;
 
-    /** Pressed Square */
+    /** Pressed Square. */
     private Square _pressed;
 
-    /** Released on Square */
+    /** Released on Square. */
     private Square _released;
 
 }
