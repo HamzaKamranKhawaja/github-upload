@@ -10,6 +10,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import static org.junit.Assert.*;
 
 import static loa.Piece.*;
 import static loa.Square.sq;
@@ -122,12 +123,25 @@ class BoardWidget extends Pad {
     /** Handle a mouse-button push on S. */
     private void mousePressed(Square s) {
         // FIXME
+        if (_board.get(s).equals(_board.turn())) {
+            _pressed = s;
+        }
         repaint();
+
     }
 
     /** Handle a mouse-button release on S. */
     private void mouseReleased(Square s) {
         // FIXME
+        _released = s;
+        repaint();
+        Move move = Move.mv(_pressed, _released);
+        if (move != null) {
+            if (_board.isLegal(move)) {
+                _commands.add(move.toString());
+                update(_board);
+            }
+        }
         repaint();
     }
 
@@ -199,5 +213,11 @@ class BoardWidget extends Pad {
 
     /** True iff accepting moves from user. */
     private boolean _acceptingMoves;
+
+    /** Pressed Square */
+    private Square _pressed;
+
+    /** Released on Square */
+    private Square _released;
 
 }

@@ -40,6 +40,15 @@ class GUI extends TopLevel implements View, Reporter {
         super(title, true);
         addMenuButton("Game->New", this::newGame);
         addMenuButton("Game->Quit", this::quit);
+        addMenuButton("help->How to play?", this::help);
+        addMenuButton("undo->UNDO PREVIOUS MOVE", this::undo);
+        addMenuButton("switch-> white to auto", this::autowhite);
+        addMenuButton("switch-> black to auto", this::autoblack);
+        addMenuButton("switch-> white to manual", this::manualwhite);
+        addMenuButton("switch-> black to manual", this::manualblack);
+
+
+
         // FIXME: Other controls?
 
         _widget = new BoardWidget(_pendingCommands);
@@ -63,6 +72,28 @@ class GUI extends TopLevel implements View, Reporter {
     private void newGame(String dummy) {
         _pendingCommands.offer("new");
     }
+
+    /** Response to "help" button click. */
+    //ADDED
+    private void help(String dummy) {
+        displayText("About", HELP_TEXT);}
+
+    private void undo(String dummy) {
+        _pendingCommands.add("undo");
+    }
+    private void autowhite(String dummy) {
+        _pendingCommands.add("autowhite");
+       }
+    private void autoblack(String dummy) {
+        _pendingCommands.add("autoblack");
+        ;}
+    private void manualwhite(String dummy) {
+        _pendingCommands.add("manualwhite");
+        ;}
+    private void manualblack(String dummy) {
+        _pendingCommands.add("manualblack");
+        ;}
+
 
     /** Return the next command from our widget, waiting for it as necessary.
      *  The BoardWidget uses _pendingCommands to queue up moves that it

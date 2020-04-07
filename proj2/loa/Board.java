@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Random;
 
 import java.util.regex.Pattern;
 
@@ -383,15 +384,25 @@ class Board {
      * and subtract the number of minimizing contiguous regions
       */
     public int boardState() {
-        if (this.winner() == Maximizer) {
+        if (piecesContiguous(Maximizer)) {
             return WINNING_VALUE;
         }
-        else if (this.winner() == Maximizer.opposite()) {
+        else if (piecesContiguous(Maximizer.opposite())) {
             return -WINNING_VALUE;
         }
-
-        return -getRegionSizes(Maximizer).size()
+        int value = -getRegionSizes(Maximizer).size()
                 + getRegionSizes(Maximizer.opposite()).size();
+        if (value > 0) {
+            return value + (int)(Math.random() * 100);
+            //return (int)(Math.random() * (value * 5 + 1));
+        }
+        if (value < 0) {
+            return value - (int)(Math.random() * 100);
+            //return (int)(Math.random() * (value * 5 - 1));
+        }
+        else {
+            return (int)(Math.random());
+        }
     }
 
     // FIXME: Other methods, variables?

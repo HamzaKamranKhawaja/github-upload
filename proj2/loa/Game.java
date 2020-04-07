@@ -108,24 +108,29 @@ class Game {
             case "dump":
                 System.out.printf("%s%n", _board);
                 break;
-            case "manual":
-                manualCommand(command.group(2).toLowerCase());
+            case "autowhite":
+                autoCommand("white");
                 break;
-            case "auto":
-                autoCommand(command.group(2).toLowerCase());
+            case "autoblack": autoCommand("black");
                 break;
-            case "quit":
-                quit();
+            case "manualwhite": manualCommand("white");
                 break;
-            case "seed":
-                seedCommand(command.group(2));
+            case "manualblack": manualCommand("black");
                 break;
-            case "set":
-                setCommand(command.group(2), command.group(3).toLowerCase(),
+            case "manual": manualCommand(command.group(2).toLowerCase());
+                break;
+            case "auto": autoCommand(command.group(2).toLowerCase());
+                break;
+            case "quit": quit();
+                break;
+            case "seed": seedCommand(command.group(2));
+                break;
+            case "set": setCommand(command.group(2), command.group(3).toLowerCase(),
                            command.group(4).toLowerCase());
                 break;
-            case "limit":
-                limitCommand(command.group(2));
+            case "undo": undo();
+                    break;
+            case "limit": limitCommand(command.group(2));
                 break;
             case "?": case "help":
                 help();
@@ -296,6 +301,19 @@ class Game {
         default:
             _reporter.reportNote("Tie game.");
             break;
+        }
+    }
+    /** undo's. */
+    private void undo() {
+        if (this.getBoard().movesMade() != 0) {
+            if (_white.isManual() && _black.isManual()) {
+                this.getBoard().retract();
+            }
+            else if (_white.isManual() || _black.isManual()) {
+                   this.getBoard().retract();
+                   this.getBoard().retract();
+            }
+            _view.update(this);
         }
     }
 

@@ -82,12 +82,12 @@ class MachinePlayer extends Player {
 
         if (sense == 1) {
             bestscore = -INFTY;
-            nextbestscore = -INFTY;
+           // nextbestscore = -INFTY;
         } //BEFORE
 
         else if (sense == -1) {
             bestscore = INFTY;
-            nextbestscore = INFTY;
+          //  nextbestscore = INFTY;
         }
 
         for (Move move : board.legalMoves()) {
@@ -99,25 +99,33 @@ class MachinePlayer extends Player {
                 board.retract();
                 if (sense == 1 && score > bestscore) {
                     bestscore = score;
-                   /* if (saveMove) {
+                  /* if (saveMove) {
                         _foundMove = move;
-                    }*/
+                       System.out.println(_foundMove.toString());
+
+                   }*/
                 } else if (sense == -1 && score < bestscore) {
                     bestscore = score;
                    /* if (saveMove) {
                         _foundMove = move;
-                    }
-*/
+                        System.out.println(_foundMove.toString());
+                    }*/
+
                 }
-                if (saveMove && score > nextbestscore) {
+               /* if (saveMove) {
+                    _foundMove = move;
+                    System.out.println(_foundMove.toString());
+
+                }*/
+                if (saveMove && sense == 1 && score >= nextbestscore) {
                     nextbestscore = score;
                     _foundMove = move;
-
-                } else if (saveMove && score < nextbestscore) {
+                }
+                else if (saveMove && sense == -1 && score < nextbestscore){
                     nextbestscore = score;
                     _foundMove = move;
+                    System.out.println(_foundMove.toString());
                 }
-
                 if (sense == 1) {
                     alpha = Math.max(bestscore, alpha);
                 } else {
@@ -128,13 +136,13 @@ class MachinePlayer extends Player {
                 }
             }
         }
-        return bestscore; // FIXME
+        return bestscore ;
     }
 
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 6;  // FIXME
+        return 3;  // FIXME
     }
 
     // FIXME: Other methods, variables here.
@@ -150,9 +158,9 @@ class MachinePlayer extends Player {
     /** Used to convey moves discovered by findMove. */
     private Move _foundMove;
 
-    /** Stores best score */
+    /** Stores best score. */
     private int bestscore;
 
-    /** Stores the best score among the next moves */
+    /** Stores the best score among the next moves. */
     private int nextbestscore;
 }
