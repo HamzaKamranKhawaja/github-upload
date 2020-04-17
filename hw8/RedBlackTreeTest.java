@@ -1,4 +1,5 @@
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RedBlackTreeTest {
 
@@ -10,6 +11,12 @@ public class RedBlackTreeTest {
         Tree.insert(6);
         Tree.insert(10);
         Tree.insert(2);
+
+        boolean isBlackRoot = Tree.graderRoot().isBlack;
+        assertTrue(isBlackRoot);
+        assertEquals(Tree.graderRoot().item.intValue(),6 );
+        assertEquals(Tree.graderRoot().left.item.intValue(),2 );
+        assertEquals(Tree.graderRoot().right.item.intValue(),10 );
     }
 
 
