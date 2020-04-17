@@ -14,7 +14,7 @@ public class RedBlackTreeTest {
 
         boolean isBlackRoot = Tree.graderRoot().isBlack;
         assertTrue(isBlackRoot);
-        assertEquals(Tree.graderRoot().item.intValue(),6 );
+        assertEquals(6, Tree.graderRoot().item.intValue() );
         assertEquals(Tree.graderRoot().left.item.intValue(),2 );
         assertEquals(Tree.graderRoot().right.item.intValue(),10 );
     }
