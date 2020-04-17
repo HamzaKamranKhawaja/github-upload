@@ -171,7 +171,7 @@ public class RedBlackTree<T extends Comparable<T>> {
             // YOUR CODE HERE
 
                 node.right = insert(node.right, item);
-                node.right.isBlack = true;
+                node.right.isBlack = false;
 
         }
 
