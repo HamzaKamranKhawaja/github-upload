@@ -1,6 +1,10 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
+
+import static capers.Dog.DOG_FOLDER;
+
 
 /** Canine Capers: A Gitlet Prelude.
  * @author Sean Dooher
@@ -10,7 +14,10 @@ public class Main {
     static final File CWD = new File(".");
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // FIXME
+    static final File CAPERS_FOLDER =  new File(".capers");
+
+    /** Contains data for story file inside .capers */
+    static File story = Utils.join(CAPERS_FOLDER, "story.txt");
 
     /**
      * Runs one of three commands:
@@ -40,7 +47,7 @@ public class Main {
      *
      * @param args arguments from the command line
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             exitWithError("Must have at least one argument");
         }
@@ -49,11 +56,17 @@ public class Main {
         case "story":
             writeStory(args);
             break;
-        // FIXME
+        case "dog":
+            makeDog(args);
+            System.out.println("in break, making dogs");
+            break;
+        case "birthday":
+            celebrateBirthday(args);
+            break;
+
         default:
             exitWithError(String.format("Unknown command: %s", args[0]));
         }
-        return;
     }
 
     /**
@@ -68,6 +81,19 @@ public class Main {
      */
     public static void setupPersistence() {
         // FIXME
+        if (!CAPERS_FOLDER.exists()) {
+            CAPERS_FOLDER.mkdir();
+        }
+        if (!DOG_FOLDER.exists()) {
+            DOG_FOLDER.mkdir();
+        }
+        if (!story.exists()) {
+            try {
+                story.createNewFile();
+            } catch (IOException e) {
+                System.out.println("unable to create story in Persistence");
+            }
+        }
     }
 
     /**
@@ -78,17 +104,25 @@ public class Main {
     public static void writeStory(String[] args) {
         validateNumArgs("story", args, 2);
         // FIXME
+        String contentsOfStory = Utils.readContentsAsString(story);
+        String updatedContents = contentsOfStory + args[1] + "\n";
+        Utils.writeContents(story, updatedContents);
+        System.out.print(updatedContents);
     }
 
     /**
      * Creates and persistently saves a dog using the first
      * three non-command arguments of args (name, breed, age).
      * Also prints out the dog's information using toString().
-     * @param args Array in format: {'story', name, breed, age}
+     * @param args Array in format: {'dog', name, breed, age}
      */
-    public static void makeDog(String[] args) {
+    public static void makeDog(String[] args) throws IOException {
         validateNumArgs("dog", args, 4);
         // FIXME
+        Dog savedDog = new Dog(args[1], args[2], Integer.parseInt(args[3]));
+        System.out.println("creating dog...");
+        savedDog.saveDog();
+        System.out.println(savedDog.toString());
     }
 
     /**
@@ -97,9 +131,12 @@ public class Main {
      * Chooses dog to advance based on the first non-command argument of args.
      * @param args Array in format: {'birthday', name}
      */
-    public static void celebrateBirthday(String[] args) {
+    public static void celebrateBirthday(String[] args) throws IOException {
         validateNumArgs("birthday", args, 2);
         // FIXME
+        Dog savedDog = Utils.readObject(Utils.join(DOG_FOLDER, args[1]), Dog.class);
+        savedDog.haveBirthday();
+        savedDog.saveDog();
     }
 
     /**
