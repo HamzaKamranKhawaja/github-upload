@@ -58,7 +58,6 @@ public class Main {
             break;
         case "dog":
             makeDog(args);
-            System.out.println("in break, making dogs");
             break;
         case "birthday":
             celebrateBirthday(args);
@@ -120,7 +119,6 @@ public class Main {
         validateNumArgs("dog", args, 4);
         // FIXME
         Dog savedDog = new Dog(args[1], args[2], Integer.parseInt(args[3]));
-        System.out.println("creating dog...");
         savedDog.saveDog();
         System.out.println(savedDog.toString());
     }
