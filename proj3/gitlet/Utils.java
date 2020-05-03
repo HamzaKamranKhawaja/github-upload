@@ -17,6 +17,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
+
+
 
 
 /** Assorted utilities.
@@ -187,14 +192,14 @@ class Utils {
     /* OTHER FILE UTILITIES */
 
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths#get(String, String[])}
      *  method. */
     static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
     }
 
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths#get(String, String[])}
      *  method. */
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();
@@ -231,5 +236,23 @@ class Utils {
     static void message(String msg, Object... args) {
         System.out.printf(msg, args);
         System.out.println();
+    }
+
+    /** Creates deep copy of Map.
+     * All items will be cloned. Used internally in this object.
+     */
+    static HashMap deepClone(HashMap map) {
+        HashMap newone = (HashMap)map.clone();
+        for (Object newkey : newone.keySet()) {
+            Object deepobj = null, newobj = newone.get(newkey);
+            if (newobj instanceof HashMap)
+                deepobj = deepClone((HashMap) newobj);
+            else if (newobj instanceof String)
+                deepobj = (Object) new String((String) newobj);
+            else if (newobj instanceof Vector)
+                deepobj = ((Vector) newobj).clone();
+            newone.put(newkey, deepobj);
+        }
+        return newone;
     }
 }
