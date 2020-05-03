@@ -92,14 +92,14 @@ public class Commands {
             System.out.println("commit " + lastCommit);
             //%tb %ta %ta
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+                    DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
             System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
             System.out.println(thisCommit.message);
         } else {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+                    DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy a"));
             System.out.println("Date: " + dateStr + " -0800"); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
             System.out.println(thisCommit.message);
             System.out.println();
@@ -120,7 +120,7 @@ public class Commands {
                         System.out.println("===");
                         System.out.println("commit " + commitFile);
                         String dateStr = thisCommit.dateTime.format(
-                                DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+                                DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
                         System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
                         System.out.println(thisCommit.message);
                         System.out.println();
@@ -128,7 +128,7 @@ public class Commands {
                         System.out.println("===");
                         System.out.println("commit " + commitFile);
                         String dateStr = thisCommit.dateTime.format(
-                                DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+                                DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
                         System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
                         System.out.println(thisCommit.message);
                         System.out.println();
@@ -147,11 +147,13 @@ public class Commands {
             boolean commitExists = false;
             for (String commitFile : Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
                     "Commit dir cannot be null")) {
+                if (!commitFile.equals("HEAD")) {
                 File FileWithCommit = Utils.join(COMMIT_DIR, commitFile);
                 Commit thisCommit = Utils.readObject(FileWithCommit, Commit.class);
                 if (thisCommit.message.equals(message)) {
                     System.out.println(commitFile);
                     commitExists = true;
+                }
                 }
             }
             if (!commitExists) {
@@ -205,6 +207,8 @@ public class Commands {
             }
         }
         System.out.println();
+        System.out.println("=== Removed Files ===");
+
         if (STAGING_DIR_REMOVAL.exists() && STAGING_DIR_REMOVAL.list() != null
                 && Objects.requireNonNull(STAGING_DIR_REMOVAL.list()).length != 0) {
             for (String filename: Objects.requireNonNull(STAGING_DIR_REMOVAL.list())) {
@@ -226,6 +230,9 @@ public class Commands {
 
     public static void checkoutFile(String Filename, String CommitID) {
         File CommitFile = Utils.join(COMMIT_DIR, CommitID);
+        if (!CommitFile.exists()) {
+            throw new GitletException("No commit with that id exists.");
+        }
         Commit headCommit = Utils.readObject(CommitFile, Commit.class);
         if (!headCommit.MAPPING.containsKey(Filename)) {
             System.out.println("File does not exist in the commit.");
@@ -235,7 +242,7 @@ public class Commands {
             String FileSHA = headCommit.MAPPING.get(Filename);
             String FileContents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, FileSHA));
             if (CWDFile.exists()) {
-                Utils.writeContents(CWD, FileContents);
+                Utils.writeContents(CWDFile, FileContents);
             } else if (!CWDFile.exists()) {
                 try {
                     File newCWDFile =  Utils.join(CWD, Filename);
@@ -295,13 +302,16 @@ public class Commands {
         Commit checkoutcommit = Utils.readObject( Utils.join(COMMIT_DIR, checkoutcommitID), Commit.class);
         Commit currentcommit = Utils.readObject(Utils.join(COMMIT_DIR, currentcommitID), Commit.class);
         for (String checkoutfile: checkoutcommit.MAPPING.keySet()) {
-            for (String fileinCWD: Objects.requireNonNull(Utils.plainFilenamesIn(CWD))) {
+            for (String fileinCWD: Objects.requireNonNull(Utils.plainFilenamesIn(CWD))) { //FIXME: Perhaps you could use contains?
                 if (fileinCWD.equals(checkoutfile)) {
                     if (!currentcommit.MAPPING.containsKey(checkoutfile)) {
                         throw new GitletException(" There is an untracked file in the way; delete it, or add and commit it first.");
                     }
                 }
             }
+            String fileID = checkoutcommit.MAPPING.get(checkoutfile);
+            String contents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, fileID));
+            Utils.writeContents(Utils.join(CWD, checkoutfile), contents);
         }
         for (String checkoutfile: checkoutcommit.MAPPING.keySet()) {
             checkoutCommit(checkoutfile, checkoutcommitID);
@@ -327,7 +337,6 @@ public class Commands {
             }
         }
         Utils.writeContents(HEAD_BRANCH, checkoutbranch);
-
     }
 
 

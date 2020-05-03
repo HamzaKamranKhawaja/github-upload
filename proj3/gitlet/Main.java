@@ -93,7 +93,17 @@ public class Main {
                 Commands.status();
                 break;
             case "checkout":
-                //call checkout()
+                if (args.length < 2 || args.length > 4 ) {
+                    throw new GitletException("Incorrect operands.");
+                } else if (args.length == 3 && args[1].equals("--")) {
+                    Commands.checkoutFileDefault(args[2]);
+                } else if (args.length == 4 && args[2].equals("--")) {
+                    Commands.checkoutCommit(args[3], args[1]);
+                }else if (args.length == 2) {
+                    Commands.checkoutBranch(args[1]);
+                } else {
+                    throw new GitletException("Incorrect operands.");
+                }
                 break;
             case "branch":
                 validateNumArgs("branch", args, 2);

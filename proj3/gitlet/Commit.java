@@ -7,9 +7,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +43,9 @@ public class Commit implements Serializable {
 
     /** default constructor */
     public Commit (String message) { //Fixme: What should the default constructor take in?
-        LocalDateTime epochObject = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+        //LocalDateTime epochObject = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+        LocalDateTime epochObject = Instant.ofEpochMilli(0).atZone(ZoneId.of("America/Los_Angeles")).toLocalDateTime();
+
         this.message = message;
         this.parent = null;
         this.MAPPING = null;
