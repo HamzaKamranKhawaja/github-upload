@@ -92,15 +92,15 @@ public class Commands {
             System.out.println("commit " + lastCommit);
             //%tb %ta %ta
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy Z"));
-            System.out.println("Date: " + dateStr); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
+                    DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+            System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
             System.out.println(thisCommit.message);
         } else {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy a"));
-            System.out.println("Date: " + dateStr); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
+                    DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+            System.out.println("Date: " + dateStr + " -0800"); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
             System.out.println(thisCommit.message);
             System.out.println();
             log(ParentSHA);
@@ -112,21 +112,27 @@ public class Commands {
         if (COMMIT_DIR.exists() && COMMIT_DIR.listFiles() != null) {
             for (String commitFile : Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
                     "Commit dir cannot be null")) {
-                File FileWithCommit = Utils.join(COMMIT_DIR, commitFile);
-                Commit thisCommit = Utils.readObject(FileWithCommit, Commit.class);
-                String ParentSHA = thisCommit.parent;
-                if (ParentSHA == null) {
-                    System.out.println("===");
-                    System.out.println("commit " + commitFile);
-                    System.out.println("Date: " + thisCommit.dateTime.toString()); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
-                    System.out.println(thisCommit.message);
-                    System.out.println();
-                } else {
-                    System.out.println("===");
-                    System.out.println("commit " + commitFile);
-                    System.out.println("Date: " + thisCommit.dateTime.toString()); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
-                    System.out.println(thisCommit.message);
-                    System.out.println();
+                if (!commitFile.equals("HEAD")) {
+                    File FileWithCommit = Utils.join(COMMIT_DIR, commitFile);
+                    Commit thisCommit = Utils.readObject(FileWithCommit, Commit.class);
+                    String ParentSHA = thisCommit.parent;
+                    if (ParentSHA == null) {
+                        System.out.println("===");
+                        System.out.println("commit " + commitFile);
+                        String dateStr = thisCommit.dateTime.format(
+                                DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+                        System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
+                        System.out.println(thisCommit.message);
+                        System.out.println();
+                    } else {
+                        System.out.println("===");
+                        System.out.println("commit " + commitFile);
+                        String dateStr = thisCommit.dateTime.format(
+                                DateTimeFormatter.ofPattern("EEEE MMMM dd hh:mm:ss yyyy"));
+                        System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
+                        System.out.println(thisCommit.message);
+                        System.out.println();
+                    }
                 }
             }
         }
