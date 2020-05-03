@@ -1,4 +1,4 @@
 meat, food and water and changed for the better. 
 
 **Should not appear in
-cool branch but will appear in master
+master branch but will appear in best branch

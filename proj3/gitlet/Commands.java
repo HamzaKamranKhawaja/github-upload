@@ -99,7 +99,7 @@ public class Commands {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy a"));
+                    DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
             System.out.println("Date: " + dateStr + " -0800"); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
             System.out.println(thisCommit.message);
             System.out.println();
@@ -262,7 +262,7 @@ public class Commands {
      * working directory, overwriting the version of the file that's already there if there is one. The
      * new version of the file is not staged. */
 
-    public static void checkoutCommit(String Filename, String CommitID) {
+    public static void checkoutCommit(String Filename, String CommitID) { //FIXME: CHECKOUT TO THE INIT??
         int counter = 0;
         String ID = "";
         for (String commitName: Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
@@ -343,7 +343,7 @@ public class Commands {
     /** Deletes the branch with the given name. This only means to delete the pointer
      *  associated with the branch; it does not mean to delete all commits that were
      *  created under the branch, or anything like that. */
-    public static void removeBranch(String branchname) {
+    public static void rmbranch(String branchname) {
         if (branchname.equals(Utils.readContentsAsString(HEAD_BRANCH))) {
             throw new GitletException("Cannot remove the current branch.");
         }
@@ -362,7 +362,7 @@ public class Commands {
      *   The [commit id] may be abbreviated as for checkout. The staging area is cleared. The
      *   command is essentially checkout of an arbitrary commit that also changes the current
      *   branch head. */
-    public void reset(String commitSHA) {
+    public static void reset(String commitSHA) {
         int counter = 0;
         String ID = "";
         for (String commitName: Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
@@ -378,7 +378,7 @@ public class Commands {
             throw new GitletException("More than 1 commits with the given name.");
         } else {
             Commit checkoutcommit = Utils.readObject(Utils.join(COMMIT_DIR, ID), Commit.class);
-            for (String filename: checkoutcommit.MAPPING.keySet())
+            for (String filename: checkoutcommit.MAPPING.keySet()) //FIXME: CAN WE RESET TO THE INIT COMMIT?
             checkoutCommit(filename, ID);
         }
         List<String> files = Utils.plainFilenamesIn(STAGING_DIR);
@@ -393,7 +393,8 @@ public class Commands {
                 Utils.join(STAGING_DIR_REMOVAL, filename).delete();
             }
         }
-        Utils.writeContents(HEAD_BRANCH, ID);
+        String branch = Utils.readContentsAsString(HEAD_BRANCH);
+        Utils.writeContents(Utils.join(BRANCHES_DIR, branch), ID);
         Utils.writeContents(HEAD, ID);
     }
 }

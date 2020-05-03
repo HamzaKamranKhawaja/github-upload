@@ -110,10 +110,12 @@ public class Main {
                 Branch.branch(args[1]);
                 break;
             case "rm-branch":
-                //call rm-branch()
+                validateNumArgs("rm-branch", args, 2);
+                Commands.rmbranch(args[1]);
                 break;
             case "reset":
-                //call reset()
+                validateNumArgs("reset", args, 2);
+                Commands.reset(args[1]);
                 break;
             case "merge":
                 //call merge()
@@ -187,7 +189,7 @@ public class Main {
      */
     public static void validateNumArgs(String cmd, String[] args, int n) {
         if (args.length != n) {
-            throw new RuntimeException(
+            throw new GitletException( //FIXME: "Invalid operands." ?
                     String.format("Invalid number of arguments for: %s.", cmd));
         }
     }
