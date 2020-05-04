@@ -128,7 +128,8 @@ public class Main {
 
     public static void initialize() throws GitletException {
         if (GITLET_DIR.exists()) {
-            throw new GitletException("A Gitlet version-control system already exists in the current directory.");
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.exit(0);
         } else if (!GITLET_DIR.exists()) {
             GITLET_DIR.mkdir();
         }

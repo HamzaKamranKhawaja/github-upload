@@ -93,7 +93,7 @@ public class Commands {
             System.out.println("commit " + lastCommit);
             //%tb %ta %ta
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
+                    DateTimeFormatter.ofPattern("EE MMMM dd HH:mm:ss yyyy"));
             System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
             System.out.println(thisCommit.message);
             System.out.println();
@@ -101,7 +101,7 @@ public class Commands {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
             String dateStr = thisCommit.dateTime.format(
-                    DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
+                    DateTimeFormatter.ofPattern("EE MMMM dd HH:mm:ss yyyy"));
             System.out.println("Date: " + dateStr + " -0800"); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
             System.out.println(thisCommit.message);
             System.out.println();

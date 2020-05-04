@@ -1,0 +1,5 @@
+1. # Attempt to init in initialized directory
+2. I prelude1.inc
+3. > init
+4. A Gitlet version-control system already exists in the current directory.
+5. <<<
