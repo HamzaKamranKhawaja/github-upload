@@ -241,7 +241,8 @@ class Utils {
     /** Creates deep copy of Map.
      * All items will be cloned. Used internally in this object.
      */
-    static HashMap deepClone(HashMap map) {
+    @SuppressWarnings("unchecked")
+    static HashMap<String, String> deepClone(HashMap map) {
         HashMap newone = (HashMap)map.clone();
         for (Object newkey : newone.keySet()) {
             Object deepobj = null, newobj = newone.get(newkey);

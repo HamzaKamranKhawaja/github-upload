@@ -51,7 +51,8 @@ public class Commands {
         String commitID = Utils.readContentsAsString(HEAD);
         Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR, commitID), Commit.class);
         if (!file.exists() && !lastCommit.MAPPING.containsKey(filename)) {
-            throw new GitletException("No reason to remove the file.");
+            System.out.println("No reason to remove the file.");
+            System.exit(0);
         }
         if (file.exists()) {
             file.delete();
@@ -95,6 +96,7 @@ public class Commands {
                     DateTimeFormatter.ofPattern("EEEE MMMM dd HH:mm:ss yyyy"));
             System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
             System.out.println(thisCommit.message);
+            System.out.println();
         } else {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
@@ -171,7 +173,7 @@ public class Commands {
      other-branch
 
      === Staged Files ===
-     wug.txt
+     wugTest.txt
      wug2.txt
 
      === Removed Files ===
@@ -273,9 +275,11 @@ public class Commands {
             }
         }
         if (counter == 0) {
-            throw new GitletException(" No commit with that id exists.");
+            System.out.println(" No commit with that id exists.");
+            System.exit(0);
         } else if (counter > 1) {
-            throw new GitletException("More than 1 commits with the given name.");
+            System.out.println("More than 1 commits with the given name.");
+            System.exit(0);
         } else {
             checkoutFile(Filename, ID);
         }
@@ -305,7 +309,8 @@ public class Commands {
             for (String fileinCWD: Objects.requireNonNull(Utils.plainFilenamesIn(CWD))) { //FIXME: Perhaps you could use contains?
                 if (fileinCWD.equals(checkoutfile)) {
                     if (!currentcommit.MAPPING.containsKey(checkoutfile)) {
-                        throw new GitletException(" There is an untracked file in the way; delete it, or add and commit it first.");
+                        System.out.println(" There is an untracked file in the way; delete it, or add and commit it first.");
+                        System.exit(0);
                     }
                 }
             }
@@ -345,11 +350,13 @@ public class Commands {
      *  created under the branch, or anything like that. */
     public static void rmbranch(String branchname) {
         if (branchname.equals(Utils.readContentsAsString(HEAD_BRANCH))) {
-            throw new GitletException("Cannot remove the current branch.");
+            System.out.println("Cannot remove the current branch.");
+            System.exit(0);
         }
         File branchFile = Utils.join(ALL_BRANCHES, branchname);
         if (!branchFile.exists()) {
-            throw new GitletException("A branch with that name does not exist.");
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
         }
         else {
             branchFile.delete();
@@ -373,9 +380,11 @@ public class Commands {
             }
         }
         if (counter == 0) {
-            throw new GitletException(" No commit with that id exists.");
+            System.out.println(" No commit with that id exists.");
+            System.exit(0);
         } else if (counter > 1) {
-            throw new GitletException("More than 1 commits with the given name.");
+            System.out.println("More than 1 commits with the given name.");
+            System.exit(0);
         } else {
             Commit checkoutcommit = Utils.readObject(Utils.join(COMMIT_DIR, ID), Commit.class);
             for (String filename: checkoutcommit.MAPPING.keySet()) //FIXME: CAN WE RESET TO THE INIT COMMIT?
