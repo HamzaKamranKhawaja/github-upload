@@ -10,35 +10,53 @@ import static gitlet.Main.*;
 
 public class Commands {
 
+
+    /**  Adds a copy of the file as it currently exists to the staging area
+     *   see the description of the commit command). For this reason, adding
+     *   a file is also called staging the file for addition. Staging an
+     *   already-staged file overwrites the previous entry in the staging
+     *   area with the new contents. The staging area should be somewhere in
+     *   .gitlet. If the current working version of the file is identical to
+     *   the version in the current commit, do not stage it to be added, and
+     *   remove it from the staging area if it is already there (as can happen
+     *   when a file is changed, added, and then changed back). The file will
+     *   no longer be staged for removal (see gitlet rm), if it was at the time
+     *   of the command.
+     *   */
+
     public static void add(String Filename) throws IOException {
         File addedFile = Utils.join(CWD, Filename);
-        if (!addedFile.exists()) {//fixme: throw gitlet exception or print and exit?
+        if (!addedFile.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
         File staged = Utils.join(STAGING_DIR, Filename);
-        if (!staged.exists()) {
-            //try {
-                staged.createNewFile();
-            //} catch (IOException e) {
-              //  e.printStackTrace();
-              //  throw new GitletException("Cannot create filename: " + Filename);
-            //}
-            String Filecontents = Utils.readContentsAsString(addedFile);
-            Utils.writeContents(staged, Filecontents);
-
-        } else if (staged.exists()) { //FIXME:  //remove it from the staging area if
-            // FIXME: 4/25/2020 // it is already there. if file in COMMIT same as the working directory, do not add;
-            //  otherwise follow through
-
-            String Filecontents = Utils.readContentsAsString(addedFile);
-            String Stagedcontents = Utils.readContentsAsString(staged);
-            if (!Filecontents.equals(Stagedcontents)) {
-                Utils.writeContents(staged, Filecontents);
-            }
-            //fixme: remove if staged for removal
+        File removeFile = Utils.join(STAGING_DIR_REMOVAL, Filename);
+        String commitSHA = Utils.readContentsAsString(HEAD);
+        Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR, commitSHA), Commit.class);
+        if (removeFile.exists()) {
+            removeFile.delete();
         }
-    }
+        if (lastCommit.MAPPING != null
+                && lastCommit.MAPPING.containsKey(Filename)) {
+            String fileSHA = lastCommit.MAPPING.get(Filename);
+            String contents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, fileSHA));
+            String CWDcontents = Utils.readContentsAsString(addedFile);
+            if (CWDcontents.equals(contents)) {
+                if (staged.exists()) {
+                    staged.delete();
+                }
+                if (!removeFile.exists()) {
+                    removeFile.delete();
+                }
+            } else {
+                Utils.writeContents(staged, CWDcontents);
+            }
+        } else {
+            String CWDcontents = Utils.readContentsAsString(addedFile);
+            Utils.writeContents(staged, CWDcontents);
+            }
+        }
 
     /**
      * Unstage the file if it is currently staged for addition.
@@ -51,14 +69,16 @@ public class Commands {
         File file = Utils.join(STAGING_DIR, filename);
         String commitID = Utils.readContentsAsString(HEAD);
         Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR, commitID), Commit.class);
-        if (!file.exists() && !lastCommit.MAPPING.containsKey(filename)) {
+        if (!file.exists() && lastCommit.MAPPING != null &&
+                !lastCommit.MAPPING.containsKey(filename)) {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
         if (file.exists()) {
             file.delete();
         }
-        if (lastCommit.MAPPING.containsKey(filename)) {
+        if (lastCommit.MAPPING != null &&
+                lastCommit.MAPPING.containsKey(filename)) {
            // try { so I dont know if this will work on gradescope but I've tested it locally and remove already works
             // you had something similar?
             //oh nice. Great minds think alike. bhai bhai. I'm laughing like crazy
@@ -239,7 +259,8 @@ public class Commands {
             System.exit(0);
         }
         Commit headCommit = Utils.readObject(CommitFile, Commit.class);
-        if (!headCommit.MAPPING.containsKey(Filename)) {
+        if (headCommit.MAPPING == null
+                || !headCommit.MAPPING.containsKey(Filename)) {
             System.out.println("File does not exist in the commit.");
             System.exit(0);
         } else {
