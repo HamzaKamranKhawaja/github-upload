@@ -10,19 +10,20 @@ import static gitlet.Main.*;
 
 public class Commands {
 
-    public static void add(String Filename) throws GitletException {
+    public static void add(String Filename) throws IOException {
         File addedFile = Utils.join(CWD, Filename);
         if (!addedFile.exists()) {//fixme: throw gitlet exception or print and exit?
-            throw new GitletException("File does not exist.");
+            System.out.println("File does not exist.");
+            System.exit(0);
         }
         File staged = Utils.join(STAGING_DIR, Filename);
         if (!staged.exists()) {
-            try {
+            //try {
                 staged.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new GitletException("Cannot create filename: " + Filename);
-            }
+            //} catch (IOException e) {
+              //  e.printStackTrace();
+              //  throw new GitletException("Cannot create filename: " + Filename);
+            //}
             String Filecontents = Utils.readContentsAsString(addedFile);
             Utils.writeContents(staged, Filecontents);
 
@@ -46,7 +47,7 @@ public class Commands {
      * the user has not already done so (do not remove it unless
      * it is tracked in the current commit).
      */
-    public static void remove(String filename) {
+    public static void remove(String filename) throws IOException {
         File file = Utils.join(STAGING_DIR, filename);
         String commitID = Utils.readContentsAsString(HEAD);
         Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR, commitID), Commit.class);
@@ -58,22 +59,19 @@ public class Commands {
             file.delete();
         }
         if (lastCommit.MAPPING.containsKey(filename)) {
-            try {
+           // try { so I dont know if this will work on gradescope but I've tested it locally and remove already works
+            // you had something similar?
+            //oh nice. Great minds think alike. bhai bhai. I'm laughing like crazy
+
                 Utils.join(STAGING_DIR_REMOVAL, filename).createNewFile();
                 Utils.restrictedDelete(Utils.join(CWD, filename)); //FIXME: Should it delete from the CWD or somewhere else?
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("File cannot be added to Removal Directory.");
-            }
+           // } catch (IOException e) {
+              //  e.printStackTrace();
+                //System.out.println("File cannot be added to Removal Directory.");
+
         }
     }
 
-    /**
-     * Starting at the current head commit, display information
-     * about each commit backwards along the commit tree until
-     * the initial commit, following the first parent commit links,
-     * ignoring any second parents found in merge commits.
-     */
 
     public static void log(String lastCommit) {
         //FIXME: FOR MERGE PARENTS? For merge
@@ -206,7 +204,7 @@ public class Commands {
             for (String filename: Objects.requireNonNull(STAGING_DIR.list())) {
                     System.out.println(filename);
             }
-        }
+        }//If I even get 20 here, I'm happy lol with this situation
         System.out.println();
         System.out.println("=== Removed Files ===");
 
@@ -215,10 +213,11 @@ public class Commands {
             for (String filename: Objects.requireNonNull(STAGING_DIR_REMOVAL.list())) {
                 System.out.println(filename);
             }
-        }
+        } //Does the output seem fine tho? Did you try copying the files from gradescope and using that? what if you have to do that several times?
+        //how long did it take? Oh I see. Okay. yeah. so you passed all except for merge? Oh I see. Can you look at some of my other errors to see if something
         System.out.println();
         System.out.println("=== Modifications Not Staged For Commit ===");
-        System.out.println();
+        System.out.println(); //THIS IS RETARDED.. No I dont think so
         System.out.println("=== Untracked Files ===");
         System.out.println();
 
@@ -233,10 +232,11 @@ public class Commands {
      *  and puts it in the working directory, overwriting the version of the file that's already there if
      *  there is one. The new version of the file is not staged. */
 
-    public static void checkoutFile(String Filename, String CommitID) {
+    public static void checkoutFile(String Filename, String CommitID) throws IOException {
         File CommitFile = Utils.join(COMMIT_DIR, CommitID);
         if (!CommitFile.exists()) {
-            throw new GitletException("No commit with that id exists.");
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
         }
         Commit headCommit = Utils.readObject(CommitFile, Commit.class);
         if (!headCommit.MAPPING.containsKey(Filename)) {
@@ -249,25 +249,25 @@ public class Commands {
             if (CWDFile.exists()) {
                 Utils.writeContents(CWDFile, FileContents);
             } else if (!CWDFile.exists()) {
-                try {
+                //try {
                     File newCWDFile =  Utils.join(CWD, Filename);
                     newCWDFile.createNewFile();
                     Utils.writeContents(newCWDFile, FileContents);
-                } catch (IOException e) {
-                    throw new GitletException("CWD file cannot be created with name: " + Filename);
-                }
+                //} catch (IOException e) {
+                  //  throw new GitletException("CWD file cannot be created with name: " + Filename);
+                //}
             }
         }
     }
     /** For Default, we simply pass in HeadCommit in CHECKOUTFILE. */
-    public static void checkoutFileDefault(String Filename) {
+    public static void checkoutFileDefault(String Filename) throws IOException {
         checkoutFile(Filename, getHead());
     }
      /** 2- Takes the version of the file as it exists in the commit with the given id, and puts it in the
      * working directory, overwriting the version of the file that's already there if there is one. The
      * new version of the file is not staged. */
 
-    public static void checkoutCommit(String Filename, String CommitID) { //FIXME: CHECKOUT TO THE INIT??
+    public static void checkoutCommit(String Filename, String CommitID) throws IOException { //FIXME: CHECKOUT TO THE INIT??
         int counter = 0;
         String ID = "";
         for (String commitName: Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
@@ -293,7 +293,7 @@ public class Commands {
     * the given branch will now be considered the current branch (HEAD). Any files that are tracked in the current
     * but are not present in the checked-out branch are deleted. The staging area is cleared, unless the checked-out
     * branch is the current branch (see Failure cases). */
-    public static void checkoutBranch(String checkoutbranch) {
+    public static void checkoutBranch(String checkoutbranch) throws IOException {
         String currentBranch = Utils.readContentsAsString(HEAD_BRANCH);
         String currentcommitID = Utils.readContentsAsString(HEAD);
         if (checkoutbranch.equals(currentBranch)) {
@@ -372,7 +372,7 @@ public class Commands {
      *   The [commit id] may be abbreviated as for checkout. The staging area is cleared. The
      *   command is essentially checkout of an arbitrary commit that also changes the current
      *   branch head. */
-    public static void reset(String commitSHA) {
+    public static void reset(String commitSHA) throws IOException {
         int counter = 0;
         String ID = "";
         for (String commitName: Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),

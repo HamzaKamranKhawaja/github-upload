@@ -28,7 +28,7 @@ public class Main {
 
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND> .... */
-    public static void main(String... args) {
+    public static void main(String... args) throws IOException {
         //FIXME: For each command, find incorrect operands checking:
         // If a user inputs a command that doesn't exist, print the message "No command with that name exists." and exit.
         if (args == null) {
@@ -54,8 +54,9 @@ public class Main {
                 Commands.add(args[1]);
                 break;
             case "commit":
-                if (args.length == 1) {
-                    throw new GitletException("Please enter a commit message.");
+                if (args.length == 1 || args[1].equals("")  ) {
+                    System.out.println("Please enter a commit message.");
+                    System.exit(0);
                 }
                 validateNumArgs("commit", args, 2);
                 if (!STAGING_DIR.exists() || STAGING_DIR.list() == null ||
@@ -91,7 +92,8 @@ public class Main {
                 break;
             case "checkout":
                 if (args.length < 2 || args.length > 4 ) {
-                    throw new GitletException("Incorrect operands.");
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
                 } else if (args.length == 3 && args[1].equals("--")) {
                     Commands.checkoutFileDefault(args[2]);
                 } else if (args.length == 4 && args[2].equals("--")) {
@@ -99,7 +101,8 @@ public class Main {
                 }else if (args.length == 2) {
                     Commands.checkoutBranch(args[1]);
                 } else {
-                    throw new GitletException("Incorrect operands.");
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
                 }
                 break;
             case "branch":

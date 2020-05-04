@@ -39,7 +39,7 @@ import static gitlet.Main.*;
  *
  *    ===
  */
-public class Commit implements Serializable {
+public class Commit implements Serializable { //this is where I handle my commits. here
 
     /** default constructor */
     public Commit (String message) { //Fixme: What should the default constructor take in?
@@ -54,7 +54,7 @@ public class Commit implements Serializable {
 
     /** constructor that takes in a message, a Localdatetime object, and commit parents SHA-1 String */
     //FIXME: Should it take in DATETIME and PARENT SHA-1 and MESSAGE?
-    public Commit (String parent, String message, LocalDateTime dateTime) {
+    public Commit (String parent, String message, LocalDateTime dateTime) throws IOException {
         this.message = message;
         this.parent = parent;
         this.dateTime = dateTime;
@@ -96,12 +96,12 @@ public class Commit implements Serializable {
             byte[] serializedCommit = Utils.serialize(this);
             String id = Utils.sha1(serializedCommit);
             File commit_file = Utils.join(COMMIT_DIR, id);
-        try {
+        //try {
                 commit_file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Cannot create commit with id: " + id);
-            }
+          //  } catch (IOException e) {
+                //e.printStackTrace();
+                //System.out.println("Cannot create commit with id: " + id);
+            //}
             //Utils.writeContents(commit_file, serializedCommit);
             Utils.writeObject(commit_file, this);
             Utils.writeContents(HEAD, id);
