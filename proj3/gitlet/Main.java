@@ -2,11 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.invoke.SwitchPoint;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import static gitlet.Commit.*;
 
 /** Driver class for Gitlet, the tiny stupid version-control system.
  *  @author Hamza Kamran
@@ -195,3 +192,5 @@ public class Main {
         }
     }
 }
+
+
