@@ -217,6 +217,10 @@ public class Commands {
             }
         }
         System.out.println();
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
+        System.out.println();
 
         //FIXME: DO THE SAME FOR Modifications Not Staged For Commit
         // AND UNTRACKED FILES. SEE JAVA DOC.
