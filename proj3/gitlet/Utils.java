@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -240,18 +239,21 @@ class Utils {
 
     /** Creates deep copy of Map.
      * All items will be cloned. Used internally in this object.
-     */
+     *@param map djkfkdgkkjd.
+     *@return map dkjfkdjfk          */
     @SuppressWarnings("unchecked")
+
     static HashMap<String, String> deepClone(HashMap map) {
-        HashMap newone = (HashMap)map.clone();
+        HashMap newone = (HashMap) map.clone();
         for (Object newkey : newone.keySet()) {
             Object deepobj = null, newobj = newone.get(newkey);
-            if (newobj instanceof HashMap)
+            if (newobj instanceof HashMap) {
                 deepobj = deepClone((HashMap) newobj);
-            else if (newobj instanceof String)
+            } else if (newobj instanceof String) {
                 deepobj = (Object) new String((String) newobj);
-            else if (newobj instanceof Vector)
+            } else if (newobj instanceof Vector) {
                 deepobj = ((Vector) newobj).clone();
+            }
             newone.put(newkey, deepobj);
         }
         return newone;

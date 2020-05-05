@@ -5,9 +5,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-import static gitlet.Commit.*;
 import static gitlet.Main.*;
 
+/**  Adds a copy of the file as it currently exists to the staging area
+ *   see the description of the commit command). For this reason, adding
+ *   a file is also called staging the file for addition. Staging an
+ *   already-staged file overwrites the previous entry in the staging
+ *   area with the.
+ *   @author hamza */
 public class Commands {
 
 
@@ -22,27 +27,30 @@ public class Commands {
      *   when a file is changed, added, and then changed back). The file will
      *   no longer be staged for removal (see gitlet rm), if it was at the time
      *   of the command.
+     * @param filename kjdshfkjhdfs
      *   */
 
-    public static void add(String Filename) throws IOException {
-        File addedFile = Utils.join(CWD, Filename);
+    public static void add(String filename) throws IOException {
+        File addedFile = Utils.join(CWD, filename);
         if (!addedFile.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-        File staged = Utils.join(STAGING_DIR, Filename);
-        File removeFile = Utils.join(STAGING_DIR_REMOVAL, Filename);
+        File staged = Utils.join(STAGING_DIR, filename);
+        File removeFile = Utils.join(STAGING_DIR_REMOVAL, filename);
         String commitSHA = Utils.readContentsAsString(HEAD);
-        Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR, commitSHA), Commit.class);
+        Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR,
+                commitSHA), Commit.class);
         if (removeFile.exists()) {
             removeFile.delete();
         }
-        if (lastCommit.MAPPING != null
-                && lastCommit.MAPPING.containsKey(Filename)) {
-            String fileSHA = lastCommit.MAPPING.get(Filename);
-            String contents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, fileSHA));
-            String CWDcontents = Utils.readContentsAsString(addedFile);
-            if (CWDcontents.equals(contents)) {
+        if (lastCommit.mapping != null
+                && lastCommit.mapping.containsKey(filename)) {
+            String fileSHA = lastCommit.mapping.get(filename);
+            String contents = Utils.readContentsAsString(Utils.join(
+                    CONTENT_DIR, fileSHA));
+            String cwdcontents = Utils.readContentsAsString(addedFile);
+            if (cwdcontents.equals(contents)) {
                 if (staged.exists()) {
                     staged.delete();
                 }
@@ -50,13 +58,13 @@ public class Commands {
                     removeFile.delete();
                 }
             } else {
-                Utils.writeContents(staged, CWDcontents);
+                Utils.writeContents(staged, cwdcontents);
             }
         } else {
-            String CWDcontents = Utils.readContentsAsString(addedFile);
-            Utils.writeContents(staged, CWDcontents);
-            }
+            String contentsAsString = Utils.readContentsAsString(addedFile);
+            Utils.writeContents(staged, contentsAsString);
         }
+    }
 
     /**
      * Unstage the file if it is currently staged for addition.
@@ -65,14 +73,16 @@ public class Commands {
      * the user has not already done so (do not remove it unless
      * it is tracked in the current commit).If the file is neither
      * staged nor tracked by the head commit, print the error message
-     * "No reason to remove the file.". */
+     * "No reason to remove the file.".
+     * @param filename dfkjhkdfjsh */
 
     public static void remove(String filename) throws IOException {
         File file = Utils.join(STAGING_DIR, filename);
         String commitID = Utils.readContentsAsString(HEAD);
-        Commit lastCommit = Utils.readObject(Utils.join(COMMIT_DIR, commitID), Commit.class);
-        if (!file.exists() && lastCommit.MAPPING != null &&
-                !lastCommit.MAPPING.containsKey(filename)) {
+        Commit lastCommit = Utils.readObject(Utils.join(
+                COMMIT_DIR, commitID), Commit.class);
+        if (!file.exists() && lastCommit.mapping != null
+                && !lastCommit.mapping.containsKey(filename)) {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
@@ -80,78 +90,69 @@ public class Commands {
         if (file.exists()) {
             file.delete();
         }
-        if (lastCommit.MAPPING != null &&
-                lastCommit.MAPPING.containsKey(filename)) {
-           // try { so I dont know if this will work on gradescope but I've tested it locally and remove already works
-            // you had something similar?
-            //oh nice. Great minds think alike. bhai bhai. I'm laughing like crazy
-
-                Utils.join(STAGING_DIR_REMOVAL, filename).createNewFile();
-                Utils.restrictedDelete(Utils.join(CWD, filename)); //FIXME: Should it delete from the CWD or somewhere else?
-           // } catch (IOException e) {
-              //  e.printStackTrace();
-                //System.out.println("File cannot be added to Removal Directory.");
-
+        if (lastCommit.mapping != null
+                && lastCommit.mapping.containsKey(filename)) {
+            Utils.join(STAGING_DIR_REMOVAL, filename).createNewFile();
+            Utils.restrictedDelete(Utils.join(CWD, filename));
         }
     }
 
+    /** Does log.
+     * @param lastCommit hjdfk */
 
     public static void log(String lastCommit) {
-        //FIXME: FOR MERGE PARENTS? For merge
-        //FIXME: commits (those that have two parent commits), add a line just below the first,
-        // as in:
-        // commit 3e8bf1d794ca2e9ef8a4007275acf3751c7170ff
-        // Merge: 4975af1 2c1ead1
-        // Date: Sat Nov 11 12:30:00 2017 -0800
-        // Merged development into master.
-
 
         File commitFile = Utils.join(COMMIT_DIR, lastCommit);
         Commit thisCommit = Utils.readObject(commitFile, Commit.class);
-        String ParentSHA = thisCommit.parent;
-        if (ParentSHA == null) {
+        String parentsha = thisCommit.parent;
+        if (parentsha == null) {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
-            //%tb %ta %ta
             String dateStr = thisCommit.dateTime.format(
                     DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss yyyy"));
-            System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
+            System.out.println("Date: " + dateStr + " -0800");
             System.out.println(thisCommit.message);
         } else {
             System.out.println("===");
             System.out.println("commit " + lastCommit);
             String dateStr = thisCommit.dateTime.format(
                     DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss yyyy"));
-            System.out.println("Date: " + dateStr + " -0800"); //FIXME: should be proper format e.g Thu Nov 9 17:01:33 2017 -0800
+            System.out.println("Date: " + dateStr + " -0800");
             System.out.println(thisCommit.message);
             System.out.println();
-            log(ParentSHA);
+            log(parentsha);
         }
     }
 
-    public static void global_log() {
+    /** used for glonbakjdshfkjdfs.
+     */
+    public static void globalLog() {
 
         if (COMMIT_DIR.exists() && COMMIT_DIR.listFiles() != null) {
-            for (String commitFile : Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
+            for (String commitFile : Objects.requireNonNull(
+                    Utils.plainFilenamesIn(COMMIT_DIR),
                     "Commit dir cannot be null")) {
                 if (!commitFile.equals("HEAD")) {
-                    File FileWithCommit = Utils.join(COMMIT_DIR, commitFile);
-                    Commit thisCommit = Utils.readObject(FileWithCommit, Commit.class);
-                    String ParentSHA = thisCommit.parent;
-                    if (ParentSHA == null) {
+                    File filewithcommit = Utils.join(COMMIT_DIR, commitFile);
+                    Commit thisCommit = Utils.readObject(filewithcommit,
+                            Commit.class);
+                    String parentsha = thisCommit.parent;
+                    if (parentsha == null) {
                         System.out.println("===");
                         System.out.println("commit " + commitFile);
                         String dateStr = thisCommit.dateTime.format(
-                                DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss yyyy"));
-                        System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
+                                DateTimeFormatter.ofPattern(
+                                        "EE MMM dd HH:mm:ss yyyy"));
+                        System.out.println("Date: " + dateStr + " -0800");
                         System.out.println(thisCommit.message);
                         System.out.println();
                     } else {
                         System.out.println("===");
                         System.out.println("commit " + commitFile);
                         String dateStr = thisCommit.dateTime.format(
-                                DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss yyyy"));
-                        System.out.println("Date: " + dateStr + " -0800"); //FIXME: DISPLAY PST NOT UTC e.g Wed Dec 31 16:00:00 1969 -0800
+                                DateTimeFormatter.ofPattern(
+                                        "EE MMM dd HH:mm:ss yyyy"));
+                        System.out.println("Date: " + dateStr + " -0800");
                         System.out.println(thisCommit.message);
                         System.out.println();
                     }
@@ -160,22 +161,28 @@ public class Commands {
         }
     }
 
-    /** Prints out the ids of all commits that have the given commit message, one per line.
-     *  If there are multiple such commits, it prints the ids out on separate lines.
-     *  The commit message is a single operand. For multilword messages, quotation used */
+    /** Prints out the ids of all commits that have the given commit message,
+     *  one per line.
+     *  If there are multiple such commits, it prints the ids out on separate
+     *  lines.
+     *  The commit message is a single operand. For multilword messages,
+     *  quotation used.
+     *  @param message kjbjhb */
 
     public static void find(String message) {
         if (COMMIT_DIR.exists() && COMMIT_DIR.listFiles() != null) {
             boolean commitExists = false;
-            for (String commitFile : Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
+            for (String commitFile : Objects.requireNonNull(
+                    Utils.plainFilenamesIn(COMMIT_DIR),
                     "Commit dir cannot be null")) {
                 if (!commitFile.equals("HEAD")) {
-                File FileWithCommit = Utils.join(COMMIT_DIR, commitFile);
-                Commit thisCommit = Utils.readObject(FileWithCommit, Commit.class);
-                if (thisCommit.message.equals(message)) {
-                    System.out.println(commitFile);
-                    commitExists = true;
-                }
+                    File filewithcommit = Utils.join(COMMIT_DIR, commitFile);
+                    Commit thisCommit = Utils.readObject(filewithcommit,
+                            Commit.class);
+                    if (thisCommit.message.equals(message)) {
+                        System.out.println(commitFile);
+                        commitExists = true;
+                    }
                 }
             }
             if (!commitExists) {
@@ -184,7 +191,8 @@ public class Commands {
         }
     }
 
-    /** Displays what branches currently exist, and marks the current branch with a *.
+    /** Displays what branches currently exist, and marks the
+     *  current branch with a *.
      *  Also displays what files have been staged for addition or removal.
      *  An example of the exact format it should follow is as follows.
 
@@ -207,14 +215,14 @@ public class Commands {
      random.stuff
      .*/
     public static void status() {
-        //FIXME: Replace the default list() method with the UTILS.PLAINFILENAMESIN method
-        String HeadBranch = Utils.readContentsAsString(HEAD_BRANCH);
+        String headbranch = Utils.readContentsAsString(HEAD_BRANCH);
         System.out.println("=== Branches ===");
         if (ALL_BRANCHES.exists() && ALL_BRANCHES.list() != null
-        && Objects.requireNonNull(ALL_BRANCHES.list()).length != 0) {
-            for (String branchname: Objects.requireNonNull(ALL_BRANCHES.list())) {
-                if (HeadBranch.equals(branchname)) {
-                    System.out.println("*"+branchname);
+            && Objects.requireNonNull(ALL_BRANCHES.list()).length != 0) {
+            for (String branchname: Objects.requireNonNull(
+                    ALL_BRANCHES.list())) {
+                if (headbranch.equals(branchname)) {
+                    System.out.println("*" + branchname);
                 } else {
                     System.out.println(branchname);
                 }
@@ -223,17 +231,19 @@ public class Commands {
         System.out.println();
         System.out.println("=== Staged Files ===");
         if (STAGING_DIR.exists() && STAGING_DIR.list() != null
-        && Objects.requireNonNull(STAGING_DIR.list()).length != 0) {
+            && Objects.requireNonNull(STAGING_DIR.list()).length != 0) {
             for (String filename: Objects.requireNonNull(STAGING_DIR.list())) {
-                    System.out.println(filename);
+                System.out.println(filename);
             }
         }
         System.out.println();
         System.out.println("=== Removed Files ===");
 
         if (STAGING_DIR_REMOVAL.exists() && STAGING_DIR_REMOVAL.list() != null
-                && Objects.requireNonNull(STAGING_DIR_REMOVAL.list()).length != 0) {
-            for (String filename: Objects.requireNonNull(STAGING_DIR_REMOVAL.list())) {
+                && Objects.requireNonNull(
+                        STAGING_DIR_REMOVAL.list()).length != 0) {
+            for (String filename: Objects.requireNonNull(
+                    STAGING_DIR_REMOVAL.list())) {
                 System.out.println(filename);
             }
         }
@@ -242,62 +252,69 @@ public class Commands {
         System.out.println();
         System.out.println("=== Untracked Files ===");
         System.out.println();
-
-        //FIXME: DO THE SAME FOR Modifications Not Staged For Commit
-        // AND UNTRACKED FILES. SEE JAVA DOC.
     }
 
     /** java gitlet.Main checkout -- [file name]
      *  java gitlet.Main checkout [commit id] -- [file name]
      *  java gitlet.Main checkout [branch name]
-     *  1- Takes the version of the file as it exists in the head commit, the front of the current branch,
-     *  and puts it in the working directory, overwriting the version of the file that's already there if
-     *  there is one. The new version of the file is not staged. */
+     *  1- Takes the version of the file as it exists in the head commit,
+     *  the front of the current branch,
+     *  and puts it in the working directory, overwriting the version of
+     *  the file that's already there if
+     *  there is one. The new version of the file is not staged.
+     *  @param filename  djhdkjfsh
+     *  @param commitid kjhdfskjh */
 
-    public static void checkoutFile(String Filename, String CommitID) throws IOException {
-        File CommitFile = Utils.join(COMMIT_DIR, CommitID);
-        if (!CommitFile.exists()) {
+    public static void checkoutFile(String filename, String commitid)
+            throws IOException {
+        File commitfile = Utils.join(COMMIT_DIR, commitid);
+        if (!commitfile.exists()) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
-        Commit headCommit = Utils.readObject(CommitFile, Commit.class);
-        if (headCommit.MAPPING == null
-                || !headCommit.MAPPING.containsKey(Filename)) {
+        Commit headCommit = Utils.readObject(commitfile, Commit.class);
+        if (headCommit.mapping == null
+                || !headCommit.mapping.containsKey(filename)) {
             System.out.println("File does not exist in the commit.");
             System.exit(0);
         } else {
-            File CWDFile = Utils.join(CWD, Filename);
-            String FileSHA = headCommit.MAPPING.get(Filename);
-            String FileContents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, FileSHA));
-            if (CWDFile.exists()) {
-                Utils.writeContents(CWDFile, FileContents);
-            } else if (!CWDFile.exists()) {
-                //try {
-                    File newCWDFile =  Utils.join(CWD, Filename);
-                    newCWDFile.createNewFile();
-                    Utils.writeContents(newCWDFile, FileContents);
-                //} catch (IOException e) {
-                  //  throw new GitletException("CWD file cannot be created with name: " + Filename);
-                //}
+            File cwdfile = Utils.join(CWD, filename);
+            String filesha = headCommit.mapping.get(filename);
+            String filecontents = Utils.readContentsAsString(Utils.join(
+                    CONTENT_DIR, filesha));
+            if (cwdfile.exists()) {
+                Utils.writeContents(cwdfile, filecontents);
+            } else if (!cwdfile.exists()) {
+                File newcwdfile =  Utils.join(CWD, filename);
+                newcwdfile.createNewFile();
+                Utils.writeContents(newcwdfile, filecontents);
             }
         }
     }
-    /** For Default, we simply pass in HeadCommit in CHECKOUTFILE. */
-    public static void checkoutFileDefault(String Filename) throws IOException {
-        checkoutFile(Filename, getHead());
+    /** For Default, we simply pass in HeadCommit in CHECKOUTFILE.
+     * @param filename dhjkdsfhkjds */
+    public static void checkoutFileDefault(String filename)
+            throws IOException {
+        checkoutFile(filename, getHead());
     }
-     /** 2- Takes the version of the file as it exists in the commit with the given id, and puts it in the
-     * working directory, overwriting the version of the file that's already there if there is one. The
-     * new version of the file is not staged. */
+     /** 2- Takes the version of the file as it exists in
+      *  the commit with the given id, and puts it in the
+     * working directory, overwriting the version of the
+      * file that's already there if there is one. The
+     * new version of the file is not staged.
+      * @param commitid dfjkjdf
+      * @param filename jdkjfdk*/
 
-    public static void checkoutCommit(String Filename, String CommitID) throws IOException { //FIXME: CHECKOUT TO THE INIT??
+    public static void checkoutCommit(String filename,
+                                      String commitid) throws IOException {
         int counter = 0;
-        String ID = "";
-        for (String commitName: Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
+        String id = "";
+        for (String commitName: Objects.requireNonNull(
+                Utils.plainFilenamesIn(COMMIT_DIR),
                 "COMMIT DIRECTORY IS NULL.")) {
-            if (commitName.startsWith(CommitID)) {
+            if (commitName.startsWith(commitid)) {
                 counter = counter + 1;
-                ID = commitName;
+                id = commitName;
             }
         }
         if (counter == 0) {
@@ -307,62 +324,58 @@ public class Commands {
             System.out.println("More than 1 commits with the given name.");
             System.exit(0);
         } else {
-            checkoutFile(Filename, ID);
+            checkoutFile(filename, id);
         }
     }
 
-    /** 3- Takes all files in the commit at the head of the given branch, and puts them in the working directory,
-    * overwriting the versions of the files that are already there if they exist. Also, at the end of this command,
-    * the given branch will now be considered the current branch (HEAD). Any files that are tracked in the current
-    * but are not present in the checked-out branch are deleted. The staging area is cleared, unless the checked-out
-    * branch is the current branch (see Failure cases). */
-    public static void checkoutBranch(String checkoutbranch) throws IOException {
-        String currentBranch = Utils.readContentsAsString(HEAD_BRANCH);
+    /** 3- Takes all files in the commit at the head of the given
+     *  branch, and puts them in the working directory,
+    * overwriting the versions of the files that are already there
+     * if they exist. Also, at the end of this command,
+    * the given branch will now be considered the current branch
+     * (HEAD). Any files that are tracked in the current
+    * but are not present in the checked-out branch are deleted.
+     * The staging area is cleared, unless the checked-out
+    * branch is the current branch (see Failure cases).
+     * @param checkoutbranch dhkjhdf */
+    public static void checkoutBranch(String checkoutbranch)
+            throws IOException {
+
         String currentcommitID = Utils.readContentsAsString(HEAD);
-        if (checkoutbranch.equals(currentBranch)) {
-            System.out.println("No need to checkout the current branch");
-            System.exit(0);
-        }
-        if (!Objects.requireNonNull(Utils.plainFilenamesIn(ALL_BRANCHES)).contains(checkoutbranch)) {
-            System.out.println("No such branch exists.");
-            System.exit(0);
-        }
-        //fixme: can the above be used to check ALL_BRANCHES (or use boolean)
-        String checkoutcommitID = Utils.readContentsAsString(Utils.join(ALL_BRANCHES, checkoutbranch));
-        Commit checkoutcommit = Utils.readObject( Utils.join(COMMIT_DIR, checkoutcommitID), Commit.class);
-        Commit currentcommit = Utils.readObject(Utils.join(COMMIT_DIR, currentcommitID), Commit.class);
-        if (checkoutcommit.MAPPING == null) {
-            if (currentcommit.MAPPING != null) {
-                for (String currentfile : currentcommit.MAPPING.keySet()) {
-                    File todelete = Utils.join(CWD, currentfile);
-                    if (todelete.exists()) {
-                        Utils.restrictedDelete(todelete);
-                    }
-                }
-            }
+        checkdir(checkoutbranch);
+        String checkoutcommitID = Utils.readContentsAsString(
+                Utils.join(ALL_BRANCHES, checkoutbranch));
+        Commit checkoutcommit = Utils.readObject(Utils.join(
+                COMMIT_DIR, checkoutcommitID), Commit.class);
+        Commit currentcommit = Utils.readObject(Utils.join(
+                COMMIT_DIR, currentcommitID), Commit.class);
+        if (checkoutcommit.mapping == null) {
+            checker(checkoutcommit, currentcommit);
 
         } else {
-            System.out.println("I am in else part");
-            for (String checkoutfile : checkoutcommit.MAPPING.keySet()) {
-                System.out.println("I am in for loop, and file is:" + checkoutfile);
-                for (String fileinCWD : Objects.requireNonNull(Utils.plainFilenamesIn(CWD))) { //FIXME: Perhaps you could use contains?
-                    System.out.println("I am in for loop, and CWDfile is:" + fileinCWD);
+            for (String checkoutfile : checkoutcommit.
+                    mapping.keySet()) {
+                for (String fileinCWD : Objects.requireNonNull(
+                        Utils.plainFilenamesIn(CWD))) {
                     if (fileinCWD.equals(checkoutfile)) {
-                        System.out.println(checkoutfile +" is being tracked");
-                        if (currentcommit.MAPPING != null
-                                && !currentcommit.MAPPING.containsKey(checkoutfile)) {
-                            System.out.println(" There is an untracked file in the way; delete it, or add and commit it first.");
+                        if (currentcommit.mapping != null
+                                && !currentcommit.mapping.containsKey(
+                                        checkoutfile)) {
+                            System.out.println(" There is an untracked file in"
+                                    + " the way; delete it, or add and"
+                                    + " commit it first.");
                             System.exit(0);
                         }
                     }
                 }
-                String fileID = checkoutcommit.MAPPING.get(checkoutfile);
-                String contents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, fileID));
+                String fileID = checkoutcommit.mapping.get(checkoutfile);
+                String contents = Utils.readContentsAsString(
+                        Utils.join(CONTENT_DIR, fileID));
                 Utils.writeContents(Utils.join(CWD, checkoutfile), contents);
             }
-            if (currentcommit.MAPPING != null) {
-                for (String currentfile : currentcommit.MAPPING.keySet()) {
-                    if (!checkoutcommit.MAPPING.containsKey(currentfile)) {
+            if (currentcommit.mapping != null) {
+                for (String currentfile : currentcommit.mapping.keySet()) {
+                    if (!checkoutcommit.mapping.containsKey(currentfile)) {
                         File todelete = Utils.join(CWD, currentfile);
                         if (todelete.exists()) {
                             Utils.restrictedDelete(todelete);
@@ -370,12 +383,11 @@ public class Commands {
                     }
                 }
             }
-            for (String checkoutfile : checkoutcommit.MAPPING.keySet()) {
+            for (String checkoutfile : checkoutcommit.mapping.keySet()) {
                 checkoutCommit(checkoutfile, checkoutcommitID);
             }
-            for (String currentfile : currentcommit.MAPPING.keySet()) {
-                //FIXME: WHAT IF CHECKOUT MAPPING IS NULL??
-                if (!checkoutcommit.MAPPING.containsKey(currentfile)) {
+            for (String currentfile : currentcommit.mapping.keySet()) {
+                if (!checkoutcommit.mapping.containsKey(currentfile)) {
                     File todelete = Utils.join(CWD, currentfile);
                     if (todelete.exists()) {
                         Utils.restrictedDelete(todelete);
@@ -383,26 +395,66 @@ public class Commands {
                 }
             }
         }
-            List<String> files = Utils.plainFilenamesIn(STAGING_DIR);
-            if (files != null && files.size() != 0) {
-                for (String filename : files) {
-                    Utils.join(STAGING_DIR, filename).delete();
+        deletedir(checkoutbranch);
+    }
+
+    /** Checks the commits against one another.
+     * @param checkoutcommit  djkdfjs
+     * @param currentcommit  dkjfdskjfds
+     */
+    public static void checker(Commit checkoutcommit, Commit currentcommit) {
+        if (currentcommit.mapping != null) {
+            for (String currentfile : currentcommit.mapping.
+                    keySet()) {
+                File todelete = Utils.join(CWD, currentfile);
+                if (todelete.exists()) {
+                    Utils.restrictedDelete(todelete);
                 }
             }
-            List<String> filesforremoval = Utils.plainFilenamesIn(STAGING_DIR_REMOVAL);
-            if (filesforremoval != null && filesforremoval.size() != 0) {
-                for (String filename : filesforremoval) {
-                    Utils.join(STAGING_DIR_REMOVAL, filename).delete();
-                }
+        }
+    }
+    /** Prevents wrong values in the directory.
+     * @param checkoutbranch dkjkdfsj
+     */
+    public static void checkdir(String checkoutbranch) {
+        String currentBranch = Utils.readContentsAsString(HEAD_BRANCH);
+        if (checkoutbranch.equals(currentBranch)) {
+            System.out.println("No need to checkout the current branch");
+            System.exit(0);
+        }
+        if (!Objects.requireNonNull(Utils.plainFilenamesIn(
+                ALL_BRANCHES)).contains(checkoutbranch)) {
+            System.out.println("No such branch exists.");
+            System.exit(0);
+        }
+    }
+
+    /** Deletes directories.
+     * @param checkoutbranch jdkjdfk */
+    public static void deletedir(String checkoutbranch) {
+        List<String> files = Utils.plainFilenamesIn(STAGING_DIR);
+        if (files != null && files.size() != 0) {
+            for (String filename : files) {
+                Utils.join(STAGING_DIR, filename).delete();
             }
+        }
+        List<String> filesforremoval = Utils.plainFilenamesIn(
+                STAGING_DIR_REMOVAL);
+        if (filesforremoval != null && filesforremoval.size() != 0) {
+            for (String filename : filesforremoval) {
+                Utils.join(STAGING_DIR_REMOVAL, filename).delete();
+            }
+        }
 
         Utils.writeContents(HEAD_BRANCH, checkoutbranch);
     }
 
-
-    /** Deletes the branch with the given name. This only means to delete the pointer
-     *  associated with the branch; it does not mean to delete all commits that were
-     *  created under the branch, or anything like that. */
+    /** Deletes the branch with the given name. This only
+     *  means to delete the pointer
+     *  associated with the branch; it does not mean to
+     *  delete all commits that were
+     *  created under the branch, or anything like that.
+     *  @param branchname dkj d*/
     public static void rmbranch(String branchname) {
         if (branchname.equals(Utils.readContentsAsString(HEAD_BRANCH))) {
             System.out.println("Cannot remove the current branch.");
@@ -412,26 +464,32 @@ public class Commands {
         if (!branchFile.exists()) {
             System.out.println("A branch with that name does not exist.");
             System.exit(0);
-        }
-        else {
+        } else {
             branchFile.delete();
         }
     }
 
-    /**  Checks out all the files tracked by the given commit. Removes tracked files that are
-     *   not present in that commit. Also moves the current branch's head to that commit node.
-     *   See the intro for an example of what happens to the head pointer after using reset.
-     *   The [commit id] may be abbreviated as for checkout. The staging area is cleared. The
-     *   command is essentially checkout of an arbitrary commit that also changes the current
-     *   branch head. */
+    /**  Checks out all the files tracked by the given commit. Removes tra
+     * cked files that are
+     *   not present in that commit. Also moves the current branch's head
+     *   to that commit node.
+     *   See the intro for an example of what happens to the head pointer
+     *   after using reset.
+     *   The [commit id] may be abbreviated as for checkout. The staging a
+     *   rea is cleared. The
+     *   command is essentially checkout of an arbitrary commit that also
+     *   changes the current
+     *   branch head.
+     *   @param commitSHA igjg*/
     public static void reset(String commitSHA) throws IOException {
         int counter = 0;
-        String ID = "";
-        for (String commitName: Objects.requireNonNull(Utils.plainFilenamesIn(COMMIT_DIR),
+        String id = "";
+        for (String commitName: Objects.requireNonNull(
+                Utils.plainFilenamesIn(COMMIT_DIR),
                 "COMMIT DIRECTORY IS NULL.")) {
             if (commitName.startsWith(commitSHA)) {
                 counter = counter + 1;
-                ID = commitName;
+                id = commitName;
             }
         }
         if (counter == 0) {
@@ -441,9 +499,11 @@ public class Commands {
             System.out.println("More than 1 commits with the given name.");
             System.exit(0);
         } else {
-            Commit checkoutcommit = Utils.readObject(Utils.join(COMMIT_DIR, ID), Commit.class);
-            for (String filename: checkoutcommit.MAPPING.keySet()) //FIXME: CAN WE RESET TO THE INIT COMMIT?
-            checkoutCommit(filename, ID);
+            Commit checkoutcommit = Utils.readObject(
+                    Utils.join(COMMIT_DIR, id), Commit.class);
+            for (String filename : checkoutcommit.mapping.keySet()) {
+                checkoutCommit(filename, id);
+            }
         }
         List<String> files = Utils.plainFilenamesIn(STAGING_DIR);
         if (files != null && files.size() != 0) {
@@ -451,14 +511,15 @@ public class Commands {
                 Utils.join(STAGING_DIR, filename).delete();
             }
         }
-        List<String> filesforremoval = Utils.plainFilenamesIn(STAGING_DIR_REMOVAL);
+        List<String> filesforremoval = Utils.plainFilenamesIn(
+                STAGING_DIR_REMOVAL);
         if (filesforremoval != null && filesforremoval.size() != 0) {
             for (String filename: filesforremoval) {
                 Utils.join(STAGING_DIR_REMOVAL, filename).delete();
             }
         }
         String branch = Utils.readContentsAsString(HEAD_BRANCH);
-        Utils.writeContents(Utils.join(BRANCHES_DIR, branch), ID);
-        Utils.writeContents(HEAD, ID);
+        Utils.writeContents(Utils.join(BRANCHES_DIR, branch), id);
+        Utils.writeContents(HEAD, id);
     }
 }
