@@ -59,9 +59,11 @@ public class Main {
                     System.exit(0);
                 }
                 validateNumArgs("commit", args, 2);
-                if (!STAGING_DIR.exists() || STAGING_DIR.list() == null ||
-                        Objects.requireNonNull(Utils.plainFilenamesIn(STAGING_DIR)).size() == 0) {
-                    System.out.println("No changes added to the commit."); //fixme: Gitlet exception?
+                if ((!STAGING_DIR.exists() || STAGING_DIR.list() == null ||
+                        Objects.requireNonNull(Utils.plainFilenamesIn(STAGING_DIR)).size() == 0)
+                                && (!STAGING_DIR_REMOVAL.exists() || STAGING_DIR_REMOVAL.list() == null ||
+                        Objects.requireNonNull(Utils.plainFilenamesIn(STAGING_DIR_REMOVAL)).size() == 0)) {
+                    System.out.println("No changes added to the commit.");
                     System.exit(0);
                 }
                 LocalDateTime now = LocalDateTime.now();

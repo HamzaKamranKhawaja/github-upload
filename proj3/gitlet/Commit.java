@@ -87,9 +87,10 @@ public class Commit implements Serializable { //this is where I handle my commit
         //For each staged file for removal, delete the corresponding mapping entry in the commit's MAPPING
         if (STAGING_DIR_REMOVAL.list() != null &&
                 Objects.requireNonNull(STAGING_DIR_REMOVAL.list()).length != 0) {
-            List<String> RemoveFilenames = Utils.plainFilenamesIn(STAGING_DIR);
-            for (String forRemoval : RemoveFilenames) {
+            for (String forRemoval : Objects.requireNonNull(Utils.plainFilenamesIn(STAGING_DIR_REMOVAL))) {
                 this.MAPPING.remove(forRemoval);
+                File removed = Utils.join(STAGING_DIR_REMOVAL, forRemoval);
+                removed.delete();
             }
         }
         //fixme: write object insteaqd of write contents of byte array

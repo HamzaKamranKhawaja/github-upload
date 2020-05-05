@@ -63,8 +63,10 @@ public class Commands {
      * If the file is tracked in the current commit, stage it for
      * removal and remove the file from the working directory if
      * the user has not already done so (do not remove it unless
-     * it is tracked in the current commit).
-     */
+     * it is tracked in the current commit).If the file is neither
+     * staged nor tracked by the head commit, print the error message
+     * "No reason to remove the file.". */
+
     public static void remove(String filename) throws IOException {
         File file = Utils.join(STAGING_DIR, filename);
         String commitID = Utils.readContentsAsString(HEAD);
@@ -74,6 +76,7 @@ public class Commands {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
+
         if (file.exists()) {
             file.delete();
         }
@@ -224,7 +227,7 @@ public class Commands {
             for (String filename: Objects.requireNonNull(STAGING_DIR.list())) {
                     System.out.println(filename);
             }
-        }//If I even get 20 here, I'm happy lol with this situation
+        }
         System.out.println();
         System.out.println("=== Removed Files ===");
 
@@ -233,11 +236,10 @@ public class Commands {
             for (String filename: Objects.requireNonNull(STAGING_DIR_REMOVAL.list())) {
                 System.out.println(filename);
             }
-        } //Does the output seem fine tho? Did you try copying the files from gradescope and using that? what if you have to do that several times?
-        //how long did it take? Oh I see. Okay. yeah. so you passed all except for merge? Oh I see. Can you look at some of my other errors to see if something
+        }
         System.out.println();
         System.out.println("=== Modifications Not Staged For Commit ===");
-        System.out.println(); //THIS IS RETARDED.. No I dont think so
+        System.out.println();
         System.out.println("=== Untracked Files ===");
         System.out.println();
 
@@ -329,42 +331,71 @@ public class Commands {
         String checkoutcommitID = Utils.readContentsAsString(Utils.join(ALL_BRANCHES, checkoutbranch));
         Commit checkoutcommit = Utils.readObject( Utils.join(COMMIT_DIR, checkoutcommitID), Commit.class);
         Commit currentcommit = Utils.readObject(Utils.join(COMMIT_DIR, currentcommitID), Commit.class);
-        for (String checkoutfile: checkoutcommit.MAPPING.keySet()) {
-            for (String fileinCWD: Objects.requireNonNull(Utils.plainFilenamesIn(CWD))) { //FIXME: Perhaps you could use contains?
-                if (fileinCWD.equals(checkoutfile)) {
-                    if (!currentcommit.MAPPING.containsKey(checkoutfile)) {
-                        System.out.println(" There is an untracked file in the way; delete it, or add and commit it first.");
-                        System.exit(0);
+        if (checkoutcommit.MAPPING == null) {
+            if (currentcommit.MAPPING != null) {
+                for (String currentfile : currentcommit.MAPPING.keySet()) {
+                    File todelete = Utils.join(CWD, currentfile);
+                    if (todelete.exists()) {
+                        Utils.restrictedDelete(todelete);
                     }
                 }
             }
-            String fileID = checkoutcommit.MAPPING.get(checkoutfile);
-            String contents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, fileID));
-            Utils.writeContents(Utils.join(CWD, checkoutfile), contents);
-        }
-        for (String checkoutfile: checkoutcommit.MAPPING.keySet()) {
-            checkoutCommit(checkoutfile, checkoutcommitID);
-        }
-        for (String currentfile: currentcommit.MAPPING.keySet()) {
-            if (!checkoutcommit.MAPPING.containsKey(currentfile)) {
-                File todelete = Utils.join(CWD, currentfile);
-                if (todelete.exists()) {
-                    Utils.restrictedDelete(todelete);
+
+        } else {
+            System.out.println("I am in else part");
+            for (String checkoutfile : checkoutcommit.MAPPING.keySet()) {
+                System.out.println("I am in for loop, and file is:" + checkoutfile);
+                for (String fileinCWD : Objects.requireNonNull(Utils.plainFilenamesIn(CWD))) { //FIXME: Perhaps you could use contains?
+                    System.out.println("I am in for loop, and CWDfile is:" + fileinCWD);
+                    if (fileinCWD.equals(checkoutfile)) {
+                        System.out.println(checkoutfile +" is being tracked");
+                        if (currentcommit.MAPPING != null
+                                && !currentcommit.MAPPING.containsKey(checkoutfile)) {
+                            System.out.println(" There is an untracked file in the way; delete it, or add and commit it first.");
+                            System.exit(0);
+                        }
+                    }
+                }
+                String fileID = checkoutcommit.MAPPING.get(checkoutfile);
+                String contents = Utils.readContentsAsString(Utils.join(CONTENT_DIR, fileID));
+                Utils.writeContents(Utils.join(CWD, checkoutfile), contents);
+            }
+            if (currentcommit.MAPPING != null) {
+                for (String currentfile : currentcommit.MAPPING.keySet()) {
+                    if (!checkoutcommit.MAPPING.containsKey(currentfile)) {
+                        File todelete = Utils.join(CWD, currentfile);
+                        if (todelete.exists()) {
+                            Utils.restrictedDelete(todelete);
+                        }
+                    }
+                }
+            }
+            for (String checkoutfile : checkoutcommit.MAPPING.keySet()) {
+                checkoutCommit(checkoutfile, checkoutcommitID);
+            }
+            for (String currentfile : currentcommit.MAPPING.keySet()) {
+                //FIXME: WHAT IF CHECKOUT MAPPING IS NULL??
+                if (!checkoutcommit.MAPPING.containsKey(currentfile)) {
+                    File todelete = Utils.join(CWD, currentfile);
+                    if (todelete.exists()) {
+                        Utils.restrictedDelete(todelete);
+                    }
                 }
             }
         }
-        List<String> files = Utils.plainFilenamesIn(STAGING_DIR);
-        if (files != null && files.size() != 0) {
-            for (String filename: files) {
-                Utils.join(STAGING_DIR, filename).delete();
+            List<String> files = Utils.plainFilenamesIn(STAGING_DIR);
+            if (files != null && files.size() != 0) {
+                for (String filename : files) {
+                    Utils.join(STAGING_DIR, filename).delete();
+                }
             }
-        }
-        List<String> filesforremoval = Utils.plainFilenamesIn(STAGING_DIR_REMOVAL);
-        if (filesforremoval != null && filesforremoval.size() != 0) {
-            for (String filename: filesforremoval) {
-                Utils.join(STAGING_DIR_REMOVAL, filename).delete();
+            List<String> filesforremoval = Utils.plainFilenamesIn(STAGING_DIR_REMOVAL);
+            if (filesforremoval != null && filesforremoval.size() != 0) {
+                for (String filename : filesforremoval) {
+                    Utils.join(STAGING_DIR_REMOVAL, filename).delete();
+                }
             }
-        }
+
         Utils.writeContents(HEAD_BRANCH, checkoutbranch);
     }
 
