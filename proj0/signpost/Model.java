@@ -558,7 +558,6 @@ class Model implements Iterable<Model.Sq> {
                 pred.connect(this);
             }
         }
-
         /**
          * Return true iff this square's sequence number is fixed.
          */
